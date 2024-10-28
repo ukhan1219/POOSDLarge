@@ -1,3 +1,13 @@
+# POOSDLarge
+- to install:
+~~~
+cd server
+npm install
+cd client
+npm install
+~~~
+
+
 ## start server:
 ~~~
 cd server
