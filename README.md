@@ -8,7 +8,7 @@ cd frontend
 npm install
 ~~~
 
-
+YOU WILL NEED TO HAVE TWO TERMINAL TABS
 ## start backend:
 ~~~
 cd backend
