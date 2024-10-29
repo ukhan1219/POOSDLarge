@@ -1,9 +1,10 @@
 # POOSDLarge
-- to install:
+to install:
 ~~~
-cd server
+cd backend
 npm install
-cd client
+...
+cd frontend
 npm install
 ~~~
 
