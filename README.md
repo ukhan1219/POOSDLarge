@@ -1,21 +1,22 @@
 # POOSDLarge
-- to install:
+to install:
 ~~~
-cd server
+cd backend
 npm install
-cd client
+...
+cd frontend
 npm install
 ~~~
 
 
-## start server:
+## start backend:
 ~~~
-cd server
-node --env-file=config.env server
+cd backend
+npm start
 ~~~
 
-## start client:
+## start frontend:
 ~~~
-cd client
+cd frontend
 npm run dev
 ~~~
