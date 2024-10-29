@@ -8,14 +8,14 @@ npm install
 ~~~
 
 
-## start server:
+## start backend:
 ~~~
-cd server
+cd backend
 node --env-file=config.env server
 ~~~
 
-## start client:
+## start frontend:
 ~~~
-cd client
+cd frontend
 npm run dev
 ~~~
