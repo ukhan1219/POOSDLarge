@@ -12,7 +12,7 @@ npm install
 ## start backend:
 ~~~
 cd backend
-node --env-file=config.env server
+npm start
 ~~~
 
 ## start frontend:
