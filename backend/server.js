@@ -1,192 +1,74 @@
-require('dotenv').config();
+require('dotenv').config(); // Load .env variables
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
+
 const app = express();
-// var cardList =
-//     [
-//         'Roy Campanella',
-//         'Paul Molitor',
-//         'Tony Gwynn',
-//         'Dennis Eckersley',
-//         'Reggie Jackson',
-//         'Gaylord Perry',
-//         'Buck Leonard',
-//         'Rollie Fingers',
-//         'Charlie Gehringer',
-//         'Wade Boggs',
-//         'Carl Hubbell',
-//         'Dave Winfield',
-//         'Jackie Robinson',
-//         'Ken Griffey, Jr.',
-//         'Al Simmons',
-//         'Chuck Klein',
-//         'Mel Ott',
-//         'Mark McGwire',
-//         'Nolan Ryan',
-//         'Ralph Kiner',
-//         'Yogi Berra',
-//         'Goose Goslin',
-//         'Greg Maddux',
-//         'Frankie Frisch',
-//         'Ernie Banks',
-//         'Ozzie Smith',
-//         'Hank Greenberg',
-//         'Kirby Puckett',
-//         'Bob Feller',
-//         'Dizzy Dean',
-//         'Joe Jackson',
-//         'Sam Crawford',
-//         'Barry Bonds',
-//         'Duke Snider',
-//         'George Sisler',
-//         'Ed Walsh',
-//         'Tom Seaver',
-//         'Willie Stargell',
-//         'Bob Gibson',
-//         'Brooks Robinson',
-//         'Steve Carlton',
-//         'Joe Medwick',
-//         'Nap Lajoie',
-//         'Cal Ripken, Jr.',
-//         'Mike Schmidt',
-//         'Eddie Murray',
-//         'Tris Speaker',
-//         'Al Kaline',
-//         'Sandy Koufax',
-//         'Willie Keeler',
-//         'Pete Rose',
-//         'Robin Roberts',
-//         'Eddie Collins',
-//         'Lefty Gomez',
-//         'Lefty Grove',
-//         'Carl Yastrzemski',
-//         'Frank Robinson',
-//         'Juan Marichal',
-//         'Warren Spahn',
-//         'Pie Traynor',
-//         'Roberto Clemente',
-//         'Harmon Killebrew',
-//         'Satchel Paige',
-//         'Eddie Plank',
-//         'Josh Gibson',
-//         'Oscar Charleston',
-//         'Mickey Mantle',
-//         'Cool Papa Bell',
-//         'Johnny Bench',
-//         'Mickey Cochrane',
-//         'Jimmie Foxx',
-//         'Jim Palmer',
-//         'Cy Young',
-//         'Eddie Mathews',
-//         'Honus Wagner',
-//         'Paul Waner',
-//         'Grover Alexander',
-//         'Rod Carew',
-//         'Joe DiMaggio',
-//         'Joe Morgan',
-//         'Stan Musial',
-//         'Bill Terry',
-//         'Rogers Hornsby',
-//         'Lou Brock',
-//         'Ted Williams',
-//         'Bill Dickey',
-//         'Christy Mathewson',
-//         'Willie McCovey',
-//         'Lou Gehrig',
-//         'George Brett',
-//         'Hank Aaron',
-//         'Harry Heilmann',
-//         'Walter Johnson',
-//         'Roger Clemens',
-//         'Ty Cobb',
-//         'Whitey Ford',
-//         'Willie Mays',
-//         'Rickey Henderson',
-//         'Babe Ruth'
-//     ];
+const MONGODB_URI = process.env.MONGODB_URI;
+const PORT = 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
 let db;
+
 async function connectToDatabase() {
     try {
-        const client = new MongoClient(MONGODB_URI);
+        const client = new MongoClient(MONGODB_URI, { useUnifiedTopology: true });
         await client.connect();
-        console.log('Connected to MongoDB Atlas');
+        console.log('✅ Connected to MongoDB Atlas');
+
+        // Connect to the specified database
         db = client.db('POOSDLarge');
+
+        // List and print all collections in the database
+        const collections = await db.listCollections().toArray();
+        console.log('Available Collections:');
+        collections.forEach(collection => console.log(`- ${collection.name}`));
     } catch (error) {
-        console.error('Error connecting to MongoDB:', error);
+        console.error('❌ Error connecting to MongoDB:', error);
         process.exit(1);
     }
 }
+
 connectToDatabase();
 
+let cardList = [
+    'Roy Campanella', 'Paul Molitor', 'Tony Gwynn', 'Dennis Eckersley',
+    'Reggie Jackson', 'Gaylord Perry', 'Buck Leonard', 'Rollie Fingers'
+];
 
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PATCH, DELETE, OPTIONS'
-    );
-    next();
-
-    // xptzl
+app.post('/api/addcard', async (req, res) => {
+    const { card } = req.body;
+    try {
+        const result = await db.collection('cards').insertOne({ card });
+        cardList.push(card);
+        res.status(200).json({ message: 'Card added successfully', cardList, insertedId: result.insertedId });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to add card' });
+    }
 });
-app.post('/api/addcard', async (req, res, next) => {
-    // incoming: userId, color
-    // outgoing: error
-    var error = '';
-    const { userId, card } = req.body;
-    // TEMP FOR LOCAL TESTING.
-    cardList.push(card);
-    var ret = { error: error };
-    res.status(200).json(ret);
+
+app.post('/api/searchcards', async (req, res) => {
+    const { search } = req.body;
+    try {
+        const _search = search.toLowerCase().trim();
+        const results = await db.collection('cards').find({ card: { $regex: _search, $options: 'i' } }).toArray();
+        res.status(200).json({ results });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to search cards' });
+    }
 });
-app.post('/api/login', async (req, res, next) => {
-    // incoming: login, password
-    // outgoing: id, firstName, lastName, error
-    var error = '';
+
+app.post('/api/login', (req, res) => {
     const { login, password } = req.body;
-    var id = -1;
-    var fn = '';
-    var ln = '';
-    if (login.toLowerCase() == 'bob' && password == 'COP4331') {
-        id = 1;
-        fn = 'Bob';
-        ln = 'Roberts';
+    if (login.toLowerCase() === 'bob' && password === 'COP4331') {
+        return res.status(200).json({ id: 1, firstName: 'Bob', lastName: 'Roberts' });
     }
-    else {
-        error = 'Invalid user name/password';
-    }
-    var ret = { id: id, firstName: fn, lastName: ln, error: error };
-    res.status(200).json(ret);
-});
-app.post('/api/searchcards', async (req, res, next) => {
-    // incoming: userId, search
-    // outgoing: results[], error
-    var error = '';
-    const { userId, search } = req.body;
-    var _search = search.toLowerCase().trim();
-    var _ret = [];
-    for (var i = 0; i < cardList.length; i++) {
-        var lowerFromList = cardList[i].toLocaleLowerCase();
-        if (lowerFromList.indexOf(_search) >= 0) {
-            _ret.push(cardList[i]);
-        }
-    }
-    var ret = { results: _ret, error: '' };
-    res.status(200).json(ret);
+    return res.status(401).json({ error: 'Invalid username/password' });
 });
 
-
-app.listen(3000);
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
