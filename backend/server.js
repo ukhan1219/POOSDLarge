@@ -115,7 +115,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 let db;
 async function connectToDatabase() {
     try {
-        const client = new MongoClient(MONGODB_URI, { useUnifiedTopology: true });
+        const client = new MongoClient(MONGODB_URI);
         await client.connect();
         console.log('Connected to MongoDB Atlas');
         db = client.db('POOSDLarge');
