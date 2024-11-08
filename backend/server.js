@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load .env variables
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -15,59 +15,84 @@ let db;
 
 async function connectToDatabase() {
     try {
-        const client = new MongoClient(MONGODB_URI, { useUnifiedTopology: true });
+        const client = new MongoClient(MONGODB_URI);
         await client.connect();
-        console.log('✅ Connected to MongoDB Atlas');
+        console.log('Connected to MongoDB Atlas');
 
-        // Connect to the specified database
         db = client.db('POOSDLarge');
 
-        // List and print all collections in the database
         const collections = await db.listCollections().toArray();
-        console.log('Available Collections:');
-        collections.forEach(collection => console.log(`- ${collection.name}`));
+        console.log('Collections in POOSDLarge:');
+        collections.forEach((collection) => {
+            console.log(`- ${collection.name}`);
+        });
     } catch (error) {
-        console.error('❌ Error connecting to MongoDB:', error);
+        console.error('Error connecting to MongoDB:', error);
         process.exit(1);
     }
 }
 
 connectToDatabase();
 
-let cardList = [
-    'Roy Campanella', 'Paul Molitor', 'Tony Gwynn', 'Dennis Eckersley',
-    'Reggie Jackson', 'Gaylord Perry', 'Buck Leonard', 'Rollie Fingers'
-];
 
-app.post('/api/addcard', async (req, res) => {
-    const { card } = req.body;
-    try {
-        const result = await db.collection('cards').insertOne({ card });
-        cardList.push(card);
-        res.status(200).json({ message: 'Card added successfully', cardList, insertedId: result.insertedId });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to add card' });
-    }
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+    next();
 });
-
-app.post('/api/searchcards', async (req, res) => {
-    const { search } = req.body;
-    try {
-        const _search = search.toLowerCase().trim();
-        const results = await db.collection('cards').find({ card: { $regex: _search, $options: 'i' } }).toArray();
-        res.status(200).json({ results });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to search cards' });
-    }
+app.post('/api/addcard', async (req, res, next) => {
+    // incoming: userId, color
+    // outgoing: error
+    var error = '';
+    const { userId, card } = req.body;
+    // TEMP FOR LOCAL TESTING.
+    cardList.push(card);
+    var ret = { error: error };
+    res.status(200).json(ret);
 });
-
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res, next) => {
+    // incoming: login, password
+    // outgoing: id, firstName, lastName, error
+    var error = '';
     const { login, password } = req.body;
-    if (login.toLowerCase() === 'bob' && password === 'COP4331') {
-        return res.status(200).json({ id: 1, firstName: 'Bob', lastName: 'Roberts' });
+    var id = -1;
+    var fn = '';
+    var ln = '';
+    if (login.toLowerCase() == 'bob' && password == 'COP4331') {
+        id = 1;
+        fn = 'Bob';
+        ln = 'Roberts';
     }
-    return res.status(401).json({ error: 'Invalid username/password' });
+    else {
+        error = 'Invalid user name/password';
+    }
+    var ret = { id: id, firstName: fn, lastName: ln, error: error };
+    res.status(200).json(ret);
 });
+app.post('/api/searchcards', async (req, res, next) => {
+    // incoming: userId, search
+    // outgoing: results[], error
+    var error = '';
+    const { userId, search } = req.body;
+    var _search = search.toLowerCase().trim();
+    var _ret = [];
+    for (var i = 0; i < cardList.length; i++) {
+        var lowerFromList = cardList[i].toLocaleLowerCase();
+        if (lowerFromList.indexOf(_search) >= 0) {
+            _ret.push(cardList[i]);
+        }
+    }
+    var ret = { results: _ret, error: '' };
+    res.status(200).json(ret);
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
