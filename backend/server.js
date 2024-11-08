@@ -20,6 +20,7 @@ async function connectToDatabase() {
         console.log('Connected to MongoDB Atlas');
 
         db = client.db('POOSDLarge');
+        usersCollection = db.collection('Users');
 
         const collections = await db.listCollections().toArray();
         console.log('Collections in POOSDLarge:');
@@ -92,6 +93,20 @@ app.post('/api/searchcards', async (req, res, next) => {
     var ret = { results: _ret, error: '' };
     res.status(200).json(ret);
 });
+
+app.get('/api/users', async (req, res) => {
+    try {
+        // Fetch all documents from the "users" collection
+        const users = await usersCollection.find({}).toArray();
+        
+        console.log('All users:', users); // Print all users to the console
+        res.status(200).json({ users });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
 
 
 app.listen(PORT, () => {
