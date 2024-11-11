@@ -1,0 +1,17 @@
+.btn {
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background-color: white;
+    border-radius: 50px;
+}
+
+.btn-txt {
+    text-decoration: none;
+    color: black;
+    font-size: medium;
+    /* background-color: red; */
+}
+
