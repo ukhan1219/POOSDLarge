@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { MongoClient, ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt');
+
 
 const app = express();
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -11,7 +13,21 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-let db, usersCollection, workoutCollection, healthInfoCollection;
+let db, usersCollection, workoutCollection, healthInfoCollection, IDCounter = 1;
+
+// Find the highest UserID and set IDCounter to the next highest one
+async function initialiseIDCounter() {
+    try {
+        const highestID = await db.collection('Users').find().sort({ ID: -1 }).limit(1).toArray();
+        if (highestID.length > 0 && highestID[0].ID) {
+            IDCounter = highestID[0].ID + 1;
+        }
+        console.log(`ID counter initialised to ${IDCounter}`);
+    }
+    catch (error) {
+        console.error("Error initialising ID counter:", error);
+    }
+}
 
 async function connectToDatabase() {
   try {
@@ -35,7 +51,7 @@ async function connectToDatabase() {
   }
 }
 
-connectToDatabase();
+connectToDatabase().then(initialiseIDCounter);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -147,6 +163,42 @@ app.delete('/api/deleteWorkout/:id', async (req, res) => {
     }
 
 });
+
+// User Signup
+app.post('/api/signup', async(req, res) => {
+    try {
+        const {name, email, password, phone } = req.body;
+
+        // Check if the email is in use already
+        const existingUser = await db.collection('Users').findOne({ Email: email});
+        if (existingUser) {
+            return res.status(400).json({message: 'Email already in use.'});
+        }
+
+        // Prep for user creation
+        const newID = IDCounter++;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create user
+        const newUser = {
+            Name: name,
+            Email: email,
+            Password: hashedPassword,
+            Phone: phone,
+            ID: newID
+        };
+
+        console.log("User Info:", newUser);
+
+        // Insert user
+        await db.collection('Users').insertOne(newUser);
+        res.status(201).json({message: 'User Signup successful'});
+        }
+        catch (error) {
+        console.error("Error during signup:", error);
+        res.status(500).json({message: 'Error during signup', error: error.message});
+    }
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
