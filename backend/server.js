@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -11,7 +11,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-let db;
+let db, usersCollection, workoutCollection, healthInfoCollection;
 
 async function connectToDatabase() {
     try {
@@ -21,6 +21,8 @@ async function connectToDatabase() {
 
         db = client.db('POOSDLarge');
         usersCollection = db.collection('Users');
+        workoutCollection = db.collection('Workout');
+        healthInfoCollection = db.collection('HealthInfo');
 
         const collections = await db.listCollections().toArray();
         console.log('Collections in POOSDLarge:');
@@ -34,7 +36,6 @@ async function connectToDatabase() {
 }
 
 connectToDatabase();
-
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -107,7 +108,58 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
+// Add Workout Entry
+app.post('/api/addWorkout', async (req, res) => {
+    const { dateString, Text, MuscleGroup, UserID } = req.body;
+    try {
+        await workoutCollection.insertOne({
+            Date: new Date(dateString),
+            Text,
+            MuscleGroup,
+            UserID: new Number(UserID)
+        });
+        res.status(200).json({ message: 'Workout entry added successfully' });
+    } catch (error) {
+        console.error('Error adding workout entry:', error);
+        res.status(500).json({ error: 'Failed to add workout entry' });
+    }
+});
 
+// Edit Workout
+app.patch('/api/editWorkout/:id', async (req, res) => {
+    const { id } = req.params;
+    const { dateString, Text, MuscleGroup } = req.body;
+    try {
+        const result = await workoutCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { Date: new Date(dateString), Text, MuscleGroup } }
+        );
+        if (result.modifiedCount === 1) {
+            res.status(200).json({ message: 'Workout entry updated successfully' });
+        } else {
+            res.status(404).json({ error: 'Workout entry not found' });
+        }
+    } catch (error) {
+        console.error('Error updating workout entry:', error);
+        res.status(500).json({ error: 'Failed to update workout entry' });
+    }
+});
+
+// Delete Workout
+app.delete('/api/deleteWorkout/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await workoutCollection.deleteOne({ _id: new ObjectId(id) });
+        if (result.deletedCount === 1) {
+            res.status(200).json({ message: 'Workout entry deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Workout entry not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting workout entry:', error);
+        res.status(500).json({ error: 'Failed to delete workout entry' });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
