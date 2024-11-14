@@ -80,18 +80,35 @@ app.post("/api/login", async (req, res, next) => {
   // outgoing: id, firstName, lastName, error
   var error = "";
   const { login, password } = req.body;
-  var id = -1;
-  var fn = "";
-  var ln = "";
-  if (login.toLowerCase() == "bob" && password == "COP4331") {
-    id = 1;
-    fn = "Bob";
-    ln = "Roberts";
-  } else {
-    error = "Invalid user name/password";
+
+  try {
+      // Search for user's email
+      const user = await db.collection('Users').findOne({ Email: login});
+      if (!user) {
+          error = "Invalid username";
+          return res.status(400).json({id: -1, name: "", error: error});
+      }
+
+      // Compare passwords
+      const passwordMatch = await bcrypt.compare(password, user.Password);
+      if (!passwordMatch) {
+          error = "Incorrect password";
+          return res.status(400).json({id: -1, name: "", error: error});
+      }
+
+      // Login successful
+      const ret = {
+          id: user.ID,
+          name: user.Name,
+          error: ""
+      };
+      res.status(200).json(ret);
   }
-  var ret = { id: id, firstName: fn, lastName: ln, error: error };
-  res.status(200).json(ret);
+
+  catch (err) {
+      console.error("Error during login:", err);
+      res.status(500).json({id: -1, name: "", error: "Oopsies we did a fucky wucky :3"});
+  }
 });
 app.post("/api/searchcards", async (req, res, next) => {
   // incoming: userId, search
