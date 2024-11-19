@@ -1,18 +1,14 @@
-import NavBar from './components/NavBar/'
-import Blurb from './components/Blurb/'
-import EyeCandy from './components/EyeCandy'
+import NavBar from './components/NavBar'
+import Content from './components/Content'
 
 import './App.css';
 
 function App() {
   return (
     < >
-      <NavBar />
-      <div className='stuff'>
-        <div className='flex-box'>
-          <Blurb />
-          <EyeCandy />
-        </div>
+      <div className='flexbox-container'>
+        <NavBar />
+        <Content />
       </div>
     </>
   );

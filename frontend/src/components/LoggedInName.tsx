@@ -12,4 +12,5 @@ function LoggedInName() {
         </div>
     );
 };
+
 export default LoggedInName;
