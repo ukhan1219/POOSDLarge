@@ -1,10 +1,14 @@
 import NavBar from '../../components/NavBar'
+import Content from '../../components/Content'
 import './styles.css'
 
 function LandingPage() {
   return (
     < >
-      <NavBar />
+      <div className='flexbox-container'>
+        <NavBar />
+        <Content />
+      </div>
     </>
   )
 }
