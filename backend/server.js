@@ -218,30 +218,45 @@ app.post('/api/signup', async(req, res) => {
 })
 
 //Inserts health info, or updates if already present
-app.post("/api/HealthInfo", async (req, res) => 
-    {
-    const {id, HeightCM, Weight, BMI, Calories} = req.body;
-    var error = '';
-    try {
+app.post("/api/HealthInfo/:id", async (req, res) => 
+  {
+  const {id} = req.params
+  const {HeightCM, Weight, BMI, Calories} = req.body;
+  const idI = BigInt(req.params.id); 
+  var error = '';
+  try {
 
-        const db = client.db();
-        const result = await db.collection('HealthInfo').updateOne( {UserID: id}, 
-            {$set: 
-                {HeightCM: parseFloat(HeightCM),
-                Weight: parseFloat(Weight), 
-                BMI: parseFloat(BMI), 
-                Calories: parseFloat(Calories)
-            }}, 
-            {upsert: true});
-        if (result.matchedCount === 0 && result.upsertedCount === 0) {
-            error = 'Error HealthInfo';
-        }
-        res.status(200).json({message: 'Successful'});
-    } catch(error){
-        res.status(500).json({message: 'Error with inserting/updating Health Info'});
-    }
+      if(isNaN(parseFloat(HeightCM))) {
+          throw new Error('Invalid Height');
+      }
+      if(isNaN(parseFloat(Weight))) {
+          throw new Error('Invalid Weight');
+      }
+      if(isNaN(parseFloat(BMI))) {
+          throw new Error('Invalid BMI');
+      }
+      if(isNaN(parseFloat(Calories))) {
+          throw new Error('Invalid Calories');
+      }
+ 
+      const result = await db.collection('HealthInfo').updateOne( {UserID: idI}, 
+      
+          {$set: 
+              {HeightCM: parseFloat(HeightCM),
+              Weight: parseFloat(Weight), 
+              BMI: parseFloat(BMI), 
+              Calories: parseFloat(Calories)
+          }}, 
+          {upsert: true});
+      if (result.matchedCount === 0 && result.upsertedCount === 0) {
+          res.status(500).json({message: 'Error with inserting/updating Health Info'});
+      }
+      res.status(200).json({message: 'Successful'});
+  } catch(error){
+      res.status(400).json({message: error.message})
+  }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+console.log(`Server running on port ${PORT}`);
 });
