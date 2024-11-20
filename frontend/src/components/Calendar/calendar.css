@@ -1,0 +1,38 @@
+.calendar{
+    text-align: center;
+    width: 100vw;
+    height: 100%;
+    /* background-color: blue; */
+}
+
+.calendar-grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    /* border: 2px solid black; */
+    margin: 15px;
+}
+
+.calendar-title{
+    font-size: 2em;
+    margin: 20px;
+}
+
+.day-of-week{
+    border: 2px solid black;
+    margin: -1px;
+    margin-top: -3px;
+}
+
+.calendar-cell{
+    font-size: 1.1em;
+    text-align: left;
+    padding: 7px;
+    border: 2px solid black;
+    height: 120px;
+    margin: -1px;
+    cursor: pointer;
+}
+
+.left-arrow, .right-arrow{
+    cursor: pointer;
+}

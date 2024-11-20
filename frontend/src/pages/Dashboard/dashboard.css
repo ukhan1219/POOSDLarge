@@ -1,0 +1,20 @@
+.stuff{
+    /* border: 5px solid black; */
+    font-family: "Inter", sans-serif;
+}
+
+.flexbox-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    align-content: flex-start;
+    height: 100vh;
+}
+
+.calendar-box{
+    width: 80vw;
+    height: 60vh;
+    margin: 5px 20px 20px 20px;
+    border: 2px solid black;
+}
