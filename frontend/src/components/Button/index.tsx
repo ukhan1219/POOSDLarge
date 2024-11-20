@@ -1,14 +1,20 @@
-
+import React from 'react';
+import {useNavigate} from 'react-router-dom'
 import './styles.css'
 
-function Button() {
-  return (
-    < >
-      <div className='btn'>
-        <a href='#' className='btn-txt'>Start Now!</a>
-      </div>
-    </>
-  )
+interface NavigateButtonProps{
+  label : string;
+  path : string;
 }
 
-export default Button
+const NavigateButton: React.FC<NavigateButtonProps> = ({label, path}) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(path);
+  };
+
+  return <button onClick={handleClick}>{label}</button> 
+};
+
+export default NavigateButton;

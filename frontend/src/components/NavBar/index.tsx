@@ -1,17 +1,14 @@
+import NavigateButton from '../Button'
 import './styles.css'
 
-function NavBar(props) {
+function NavBar() {
   return (
     < >
       <div className="header">
-        <p className="logo">Fit</p>
+        <h3 className="logo">Fit</h3>
         <div className="navigation">
-          <a href="#">About</a>
-          {props.status ? (
-            <a href='#'>Account</a>
-          ) : (
-            <a href="#">Login</a>
-          )}
+          <a href="">About</a>
+          {/*<NavigateButton path = './LoginPage/index.tsx' label = 'login'/>*/}
         </div>
       </div>
     </>
