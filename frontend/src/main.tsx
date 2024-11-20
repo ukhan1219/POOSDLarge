@@ -8,7 +8,7 @@ import './styles.css'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
-    {/* <LandingPage /> */}
+    {/* <Dashboard /> */}
     <Router >
       <Routes>
         {/* <Route path="/login" element={<LoginPage />} /> */}
