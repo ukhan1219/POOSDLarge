@@ -1,13 +1,11 @@
-
-
-import './styles.css'
+import './styles.css';
 
 function LoginPage() {
-  return(
-    < >
-    
-    </>
-  )
+    return (
+      <>
+        <p> -------------yay! :p </p>
+      </>
+    );
 }
 
-export default LoginPage
+export default LoginPage;

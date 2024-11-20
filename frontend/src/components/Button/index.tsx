@@ -1,11 +1,13 @@
-
+import { Link } from 'react-router-dom';
 import './styles.css'
 
 function Button() {
   return (
     < >
       <div className='btn'>
-        <a href='#' className='btn-txt'>Start Now!</a>
+        <Link to="/login" className="btn-txt">
+          Start Now!
+        </Link>
       </div>
     </>
   )

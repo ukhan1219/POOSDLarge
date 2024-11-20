@@ -1,4 +1,3 @@
-
 import Blurb from '../Blurb'
 import dumbbells from '../../assets/dumbbells.png'
 
