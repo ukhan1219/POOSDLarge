@@ -1,10 +1,11 @@
 import './styles.css';
+import ProfileForm from "../../components/Profile/input";
 
 function ProfilePage() {
   return(
-    <div className="background">
-     <p> heyyyy </p> 
-    </div>
+    <>
+        <ProfileForm />
+    </>
   )
 }
 

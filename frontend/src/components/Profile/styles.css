@@ -1,0 +1,26 @@
+/* this is for input.tsx */
+
+/* background image */
+.profile-background {
+    margin: 0;
+    padding: 0; 
+    background-image: url('../../assets/weight.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh; 
+    width: 100vw; 
+    overflow:hidden;
+}
+
+/* back to website button  */
+.home-button {
+    color: white;
+    font-size: medium;
+    text-decoration: none;
+}
+
+.home-button:hover {
+    text-decoration: underline; 
+}
+
