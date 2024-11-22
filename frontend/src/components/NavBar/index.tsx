@@ -1,6 +1,6 @@
 import NavigateButton from '../Button'
 import './styles.css'
-
+// TODO: LEO YOU BETTER FIX THIS 
 function NavBar() {
   return (
     < >

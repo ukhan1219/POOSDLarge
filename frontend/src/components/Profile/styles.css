@@ -1,0 +1,35 @@
+/* This is for index.tsx */
+
+/* background image */
+
+
+/* Back to website button */
+.home-button {
+    color: white;
+    font-size: medium;
+    text-decoration: none;
+}
+
+.home-button:hover {
+    text-decoration: underline;
+}
+
+/* Box holding everything */
+.profile-form-wrapper {
+    position: relative;
+    background: #323333;
+    padding: 2rem;
+    margin: 7rem auto; /* Center the box horizontally */
+    border-radius: 30px;
+    font-family: 'JetBrains Mono', monospace;
+    top: 10px;
+    height: 680px;
+    width: 500px;
+}
+
+/* Form footer */
+.form-footer {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
