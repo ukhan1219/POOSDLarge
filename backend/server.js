@@ -218,30 +218,96 @@ app.post('/api/signup', async(req, res) => {
 })
 
 //Inserts health info, or updates if already present
-app.post("/api/HealthInfo", async (req, res) => 
-    {
-    const {id, HeightCM, Weight, BMI, Calories} = req.body;
-    var error = '';
-    try {
+app.post("/api/HealthInfo/:id", async (req, res) => 
+  {
+  const {id} = req.params
+  const {HeightCM, Weight, BMI, Calories} = req.body;
+  const idI = BigInt(req.params.id); 
+  var error = '';
+  try {
 
-        const db = client.db();
-        const result = await db.collection('HealthInfo').updateOne( {UserID: id}, 
-            {$set: 
-                {HeightCM: parseFloat(HeightCM),
-                Weight: parseFloat(Weight), 
-                BMI: parseFloat(BMI), 
-                Calories: parseFloat(Calories)
-            }}, 
-            {upsert: true});
-        if (result.matchedCount === 0 && result.upsertedCount === 0) {
-            error = 'Error HealthInfo';
-        }
-        res.status(200).json({message: 'Successful'});
-    } catch(error){
-        res.status(500).json({message: 'Error with inserting/updating Health Info'});
-    }
+      if(isNaN(parseFloat(HeightCM))) {
+          throw new Error('Invalid Height');
+      }
+      if(isNaN(parseFloat(Weight))) {
+          throw new Error('Invalid Weight');
+      }
+      if(isNaN(parseFloat(BMI))) {
+          throw new Error('Invalid BMI');
+      }
+      if(isNaN(parseFloat(Calories))) {
+          throw new Error('Invalid Calories');
+      }
+ 
+      const result = await db.collection('HealthInfo').updateOne( {UserID: idI}, 
+      
+          {$set: 
+              {HeightCM: parseFloat(HeightCM),
+              Weight: parseFloat(Weight), 
+              BMI: parseFloat(BMI), 
+              Calories: parseFloat(Calories)
+          }}, 
+          {upsert: true});
+      if (result.matchedCount === 0 && result.upsertedCount === 0) {
+          res.status(500).json({message: 'Error with inserting/updating Health Info'});
+      }
+      res.status(200).json({message: 'Successful'});
+  } catch(error){
+      res.status(400).json({message: error.message})
+  }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+console.log(`Server running on port ${PORT}`);
+});
+
+// Edit user info, only changes the fields that have been filled out, leaves the rest of the fields alone, includes password changing iff current password is there and correct
+app.put("/api/user/:id", async (req, res) => {
+    // Get user ID to find which user to edit
+    const userID = parseInt(req.params.id, 10);
+    // Then get user's fields to edit
+    const {name, email, phone, currentPassword, newPassword} = req.body;
+
+    try {
+        const user = await db.collection('Users').findOne({ID: userID});
+        // Fund user fielfs to update
+        const thingsToUpdate = {
+            ...(name && {Name: name}),
+            ...(email && {Email: email}),
+            ...(phone && {Phone: phone})
+        };
+
+        // Check if nerw password is there but not old password
+        if (!currentPassword && newPassword) {
+            return res.status(400).json({message: "Both passwords are required."});
+        }
+
+        // Only runs if both passwords are there
+        if (currentPassword && newPassword) {
+            // Check if current password is correct
+            const passwordMatch = await bcrypt.compare(currentPassword, user.Password);
+            if (!passwordMatch) {
+                return res.status(401).json({message: "Current password is incorrect."});
+            }
+            // Hash and update password
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            thingsToUpdate.Password = hashedPassword;
+        }
+
+        // Find user from ID and update
+        const result = await db.collection('Users').updateOne(
+            {ID: userID},
+            {$set: thingsToUpdate}
+        );
+
+        if (result.matchedCount == 0) {
+            return res.status(404).json({message: "User not found."});
+        }
+
+        res.status(200).json({message: "User successfully updated."});
+    }
+    catch (error) {
+        console.error("Error while updating user:", error);
+        res.status(500).json({message: "Error while updating user", error:error.message});
+    }
 });

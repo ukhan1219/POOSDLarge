@@ -1,16 +1,17 @@
 import NavBar from '../../components/NavBar'
 import Content from '../../components/Content'
-import './landingPage.css'
 
-function LandingPage() {
-  return (
+import './dashboard.css'
+
+function Dashboard(props) {
+  return(
     < >
       <div className='flexbox-container'>
-        <NavBar />
-        <Content />
+        <NavBar status={props.status}/> 
+        <Content status={props.status}/>
       </div>
     </>
   )
 }
 
-export default LandingPage
+export default Dashboard
