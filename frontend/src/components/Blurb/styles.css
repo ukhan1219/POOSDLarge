@@ -9,6 +9,12 @@
     padding: 50px;
     color: black;
     border-radius: 30px;
+
+    /*display content*/
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: center;
 }
 
 .phrase{
@@ -20,9 +26,23 @@
 }
 
 .btn-container{
+    width: 400px;
     display:flex;
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 30px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
     height: 100px;
     justify-content: center;
     align-items: center;
-    align-items: flex-end;
+    cursor: pointer;
+}
+
+.btn-container:hover{
+    background-color: #333;
 }

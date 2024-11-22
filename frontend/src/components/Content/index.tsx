@@ -6,7 +6,13 @@ import DayCard from "../DayCard";
 
 import "./content.css";
 
-function Content(props) {
+interface ContentProps {
+  status: boolean;
+}
+
+const Content: React.FC<ContentProps> = ({ status }) => {
+  console.log("content status:", status);
+
   const selectedOption = 0;
 
   let content;
@@ -21,19 +27,8 @@ function Content(props) {
 
   return (
     <div className="stuff">
-      {props.status ? (
-        <>
-          <div className="calendar-container">
-            <Calendar />
-          </div>
-          <div className="action-container">{content}</div>
-        </>
-      ) : (
-        <>
-          <Blurb />
-          <img src={dumbbells} className="dumbbells"></img>
-        </>
-      )}
+        <Blurb status = {status}/>
+        <img src={dumbbells} className="dumbbells"></img>
     </div>
   );
 }

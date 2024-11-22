@@ -3,12 +3,17 @@ import Content from '../../components/Content'
 
 import './dashboard.css'
 
-function Dashboard(props) {
+interface DashboardProps{
+  status: boolean;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({status}) => {
+  console.log('DB status', status);
   return(
     < >
       <div className='flexbox-container'>
-        <NavBar status={props.status}/> 
-        <Content status={props.status}/>
+        <NavBar/> 
+        <Content status={status}/>
       </div>
     </>
   )

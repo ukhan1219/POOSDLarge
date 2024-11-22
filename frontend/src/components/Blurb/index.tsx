@@ -1,9 +1,14 @@
-import Button from '../Button/'
-
-
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import './styles.css'
+import React from "react";
 
-function Blurb() {
+interface BlurbProps{
+  status: boolean;
+}
+
+const Blurb: React.FC<BlurbProps> = ({status}) => {
+  console.log("Blurb status:", status);
+  const destination = status ? "/calendar" : "/login";
   return (
     < >
       <div className='content'>
@@ -14,12 +19,10 @@ function Blurb() {
           <br></br>
           Get Healthy!
         </p>
-        <p className='message'>
+        {/* <p className='message'>
           Welcome to our fitness tracker website designed to help you achieve your goals and transform your body and mind.
-        </p>
-        <div className='btn-container'>
-          <Button />
-        </div>
+        </p> */}
+        <Link to={destination} className = "btn-container">Get Started</Link>
       </div>
     </>
   )
