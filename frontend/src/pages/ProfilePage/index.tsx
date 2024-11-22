@@ -5,7 +5,6 @@ function ProfilePage() {
   return (
     <div className="background">
       <ProfileForm />
-      <></>
     </div>
   );
 }
