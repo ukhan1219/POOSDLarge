@@ -1,6 +1,5 @@
-import NavigateButton from '../Button'
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import './styles.css'
-// TODO: LEO YOU BETTER FIX THIS 
 function NavBar() {
   return (
     < >
@@ -8,7 +7,7 @@ function NavBar() {
         <h3 className="logo">Fit</h3>
         <div className="navigation">
           <a href="">About</a>
-          {/*<NavigateButton path = './LoginPage/index.tsx' label = 'login'/>*/}
+          <Link to = '/login'>Login</Link>
         </div>
       </div>
     </>
