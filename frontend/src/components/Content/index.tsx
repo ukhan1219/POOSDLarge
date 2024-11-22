@@ -1,44 +1,41 @@
-import Calendar from '../Calendar'
-import Blurb from '../Blurb'
-import dumbbells from '../../assets/dumbbells.png'
-import Update from '../Update'
-import DayCard from '../DayCard'
+import Calendar from "../Calendar";
+import Blurb from "../Blurb";
+import dumbbells from "../../assets/dumbbells.png";
+import Update from "../Update";
+import DayCard from "../DayCard";
 
-import './content.css'
+import "./content.css";
 
 function Content(props) {
-  
-  const selectedOption = 1
+  const selectedOption = 0;
 
   let content;
   switch (selectedOption) {
     case 0:
-      content = <Update />
-      break
+      content = <Update />;
+      break;
     case 1:
-      content = <DayCard />
-      break
+      content = <DayCard />;
+      break;
   }
 
   return (
-    <div className='stuff'>
+    <div className="stuff">
       {props.status ? (
-        < >
-          <div className='calendar-container'>
+        <>
+          <div className="calendar-container">
             <Calendar />
           </div>
-          <div className='action-container'>
-            {content}
-          </div>
+          <div className="action-container">{content}</div>
         </>
       ) : (
-        < >
+        <>
           <Blurb />
-          <img src={dumbbells} className='dumbbells'></img>
+          <img src={dumbbells} className="dumbbells"></img>
         </>
       )}
     </div>
-  )
+  );
 }
 
-export default Content
+export default Content;
