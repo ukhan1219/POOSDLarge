@@ -1,0 +1,46 @@
+.content-login {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1em;
+    min-width: 480px;
+    width: 600px;
+    height: 100%;
+    background-color: #000;
+    padding: 50px;
+    color: white;
+    border-radius: 30px;
+
+    /* Flexbox for layout */
+    display: flex;
+    flex-direction: column; /* Stack main sections vertically */
+    justify-content: center;
+    align-items: center;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between; /* Space items to opposite ends */
+    align-items: center; /* Vertically center items */
+    width: 100%; /* Take up full width of container */
+}
+
+h1 {
+    font-size: 1.5em; /* Adjust size as needed */
+    color: white; /* Text color */
+}
+
+.home-button {
+    font-size: 1em; /* Adjust size as needed */
+    color: white; /* Link text color */
+    text-decoration: none; /* Remove underline */
+    margin-right: 0; /* Keep it aligned to the edge */
+}
+.home-button:hover {
+    text-decoration: underline; /* Optional hover effect */
+}
+
+.punchingbag {
+    max-width: 100%; /* Ensure it fits within the box */
+    max-height: 100%; /* Ensure it fits within the box */
+    object-fit: contain; /* Maintain aspect ratio */
+    border-radius: 20px; /* Optional: Rounded corners */
+}

@@ -118,7 +118,7 @@ export default function ProfileForm() {
             }}
           />
         ) : (
-          <span>{userData.height || "N/A"} cm</span>
+          <span className="read-only-text">{userData.height || "N/A"} cm</span>
         )}
       </div>
 
@@ -139,7 +139,7 @@ export default function ProfileForm() {
             }}
           />
         ) : (
-          <span>{userData.weight || "N/A"} kg</span>
+          <span className="read-only-text">{userData.weight || "N/A"} kg</span>
         )}
       </div>
 
@@ -148,7 +148,7 @@ export default function ProfileForm() {
         <label htmlFor="bmi" className="form-label">
           BMI:
         </label>
-        <span>{bmi || "N/A"}</span>
+        <span className="read-only-text">{bmi || "N/A"}</span>
       </div>
 
       {/* Email */}
@@ -165,7 +165,7 @@ export default function ProfileForm() {
             onChange={handleChange}
           />
         ) : (
-          <span>{userData.email || "N/A"}</span>
+          <span className="read-only-text">{userData.email || "N/A"}</span>
         )}
       </div>
 

@@ -1,13 +1,15 @@
+import LoginContent from "../../components/LoginContent";
 
-
-import './styles.css'
+import "./styles.css";
 
 function LoginPage() {
-  return(
-    < >
-    
+  return (
+    <>
+      <div className="flexbox-container">
+        <LoginContent />
+      </div>
     </>
-  )
+  );
 }
 
-export default LoginPage
+export default LoginPage;

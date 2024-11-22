@@ -8,7 +8,7 @@ export default function Form() {
     <div>
       {/* Box holding everything */}
       <div className="profile-form-wrapper">
-        <Link to="/" className="home-button">
+        <Link to="/dashboard" className="home-button">
           ← Back to website
         </Link>
 
