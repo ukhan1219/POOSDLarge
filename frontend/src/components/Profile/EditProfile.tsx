@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./inputstyles.css";
 import ProfileHeader from "./ProfileHeader";
-
-const API_BASE_URL = "http://localhost:3000/api";
-
+// TODO CONNECT TO API
 export default function ProfileForm() {
   const [userData, setUserData] = useState({
     email: "",
@@ -14,14 +12,18 @@ export default function ProfileForm() {
     retypePassword: "",
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [bmi, setBmi] = useState(null); // BMI calculation
-  const userId = 1; // Replace with actual user ID from context or props.
+  // bmi calculation
+  const [bmi, setBmi] = useState(null);
+  // TODO UPDATE WITH USER ID WHEN LOGGED IN
+  const userId = 1;
 
-  // Fetch user data on mount
   useEffect(() => {
     async function fetchUserData() {
       try {
-        const response = await fetch(`${API_BASE_URL}/user/${userId}`);
+        // TODO CHANGE API URL WHEN PUSHED TO PROD
+        const response = await fetch(
+          `http://localhost:3000/api/user/${userId}`,
+        );
         if (!response.ok) throw new Error("Failed to fetch user data.");
         const data = await response.json();
         setUserData({
@@ -40,13 +42,13 @@ export default function ProfileForm() {
     fetchUserData();
   }, []);
 
-  // Handle input changes
+  // input changes
   const handleChange = (e) => {
     const { id, value } = e.target;
     setUserData((prev) => ({ ...prev, [id]: value }));
   };
 
-  // Calculate BMI
+  // calculate bmi
   const calculateBMI = (weight, height) => {
     if (weight && height) {
       const bmiValue = (weight / (height / 100) ** 2).toFixed(2);
@@ -56,12 +58,12 @@ export default function ProfileForm() {
     }
   };
 
-  // Toggle edit mode
+  // edit mode
   const toggleEdit = () => {
     setIsEditing((prev) => !prev);
   };
 
-  // Save changes
+  // save edits
   const handleSave = async () => {
     if (userData.newPassword !== userData.retypePassword) {
       alert("Passwords do not match.");
@@ -121,8 +123,6 @@ export default function ProfileForm() {
           <span className="read-only-text">{userData.height || "N/A"} cm</span>
         )}
       </div>
-
-      {/* Weight */}
       <div className="form-row">
         <label htmlFor="weight" className="form-label">
           Weight (kg):
@@ -143,7 +143,6 @@ export default function ProfileForm() {
         )}
       </div>
 
-      {/* BMI */}
       <div className="form-row">
         <label htmlFor="bmi" className="form-label">
           BMI:
@@ -169,7 +168,6 @@ export default function ProfileForm() {
         )}
       </div>
 
-      {/* Passwords (only in edit mode) */}
       {isEditing && (
         <>
           <div className="form-row">
@@ -213,7 +211,6 @@ export default function ProfileForm() {
         </>
       )}
 
-      {/* Edit/Save Button */}
       <div className="form-footer">
         <button onClick={toggleEdit} className="rounded-input">
           {isEditing ? "Cancel" : "Edit"}
