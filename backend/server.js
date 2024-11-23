@@ -101,7 +101,7 @@ app.post("/api/login", async (req, res, next) => {
 app.post("/api/addWorkout", async (req, res) => {
   const { dateString, Text, MuscleGroup, UserID } = req.body;
   try {
-    const userIDInt = BigInt(UserID);
+    const userIDInt = parseInt(UserID, 10);
     await workoutCollection.insertOne({
       Date: new Date(dateString),
       Text,
@@ -134,13 +134,15 @@ app.patch("/api/editWorkout", async (req, res) => {
 
     const result = await workoutCollection.updateMany(
       { UserID: parseInt(UserID, 10) },
-      { $set: updates }
+      { $set: updates },
     );
 
     if (result.modifiedCount > 0) {
       res.status(200).json({ message: "Workout entries updated successfully" });
     } else {
-      res.status(404).json({ error: "No workout entries found for this UserID." });
+      res
+        .status(404)
+        .json({ error: "No workout entries found for this UserID." });
     }
   } catch (error) {
     console.error("Error updating workout entry:", error);
@@ -159,12 +161,16 @@ app.delete("/api/deleteWorkout", async (req, res) => {
       return res.status(400).json({ error: "Invalid UserID: User not found." });
     }
 
-    const result = await workoutCollection.deleteMany({ UserID: parseInt(UserID, 10) });
+    const result = await workoutCollection.deleteMany({
+      UserID: parseInt(UserID, 10),
+    });
 
     if (result.deletedCount > 0) {
       res.status(200).json({ message: "Workout entries deleted successfully" });
     } else {
-      res.status(404).json({ error: "No workout entries found for this UserID." });
+      res
+        .status(404)
+        .json({ error: "No workout entries found for this UserID." });
     }
   } catch (error) {
     console.error("Error deleting workout entry:", error);
@@ -183,12 +189,16 @@ app.get("/api/getWorkoutInfo", async (req, res) => {
       return res.status(400).json({ error: "Invalid UserID: User not found." });
     }
 
-    const workouts = await workoutCollection.find({ UserID: parseInt(UserID, 10) }).toArray();
+    const workouts = await workoutCollection
+      .find({ UserID: parseInt(UserID, 10) })
+      .toArray();
 
     if (workouts.length > 0) {
       res.status(200).json(workouts);
     } else {
-      res.status(404).json({ error: "No workout entries found for this UserID." });
+      res
+        .status(404)
+        .json({ error: "No workout entries found for this UserID." });
     }
   } catch (error) {
     console.error("Error fetching workout info:", error);
@@ -238,7 +248,7 @@ app.post("/api/signup", async (req, res) => {
 app.post("/api/HealthInfo/:id", async (req, res) => {
   const { id } = req.params;
   const { HeightCM, Weight, BMI } = req.body;
-  const idI = BigInt(req.params.id);
+  const idI = parseInt(req.params.id, 10);
   var error = "";
   try {
     if (isNaN(parseFloat(HeightCM))) {
@@ -281,7 +291,7 @@ app.listen(PORT, () => {
 // Edit user info, only changes the fields that have been filled out, leaves the rest of the fields alone, includes password changing iff current password is there and correct
 app.put("/api/user/:id", async (req, res) => {
   // Get user ID to find which user to edit
-  const userID = BigInt(req.params.id);
+  const userID = parseInt(req.params.id, 10);
   // Then get user's fields to edit
   const { email, phone, currentPassword, newPassword } = req.body;
 
