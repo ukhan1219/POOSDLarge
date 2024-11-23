@@ -5,8 +5,18 @@ import ProfileHeader from "./ProfileHeader";
 
 export default function ProfileForm() {
   const { user } = useAuth();
-  const [userInfo, setUserInfo] = useState(null);
-  const [healthInfo, setHealthInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    Email: "",
+    Name: "",
+  });
+  const [healthInfo, setHealthInfo] = useState({
+    HeightCM: "",
+    Weight: "",
+    BMI: "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const userId = user?.id;
 
@@ -25,22 +35,21 @@ export default function ProfileForm() {
           fetch(`http://localhost:3000/api/gethealthinfo/${userId}`),
         ]);
 
-        if (!userResponse.ok) {
-          throw new Error("Failed to fetch user data.");
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          console.log("User data fetched:", userData);
+          setUserInfo((prevState) => ({ ...prevState, ...userData }));
+        } else {
+          console.warn("Failed to fetch user data.");
         }
 
-        if (!healthResponse.ok) {
-          throw new Error("Failed to fetch health data.");
+        if (healthResponse.ok) {
+          const healthData = await healthResponse.json();
+          console.log("Health data fetched:", healthData);
+          setHealthInfo((prevState) => ({ ...prevState, ...healthData }));
+        } else {
+          console.warn("Failed to fetch health data.");
         }
-
-        const userData = await userResponse.json();
-        const healthData = await healthResponse.json();
-
-        console.log("User data fetched:", userData);
-        console.log("Health data fetched:", healthData);
-
-        setUserInfo(userData);
-        setHealthInfo(healthData);
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
@@ -49,16 +58,105 @@ export default function ProfileForm() {
     fetchData();
   }, [userId]);
 
-  if (!userId) {
-    return <p>Loading user information...</p>;
-  }
+  const handleEditToggle = () => {
+    setIsEditing((prev) => !prev);
+    setCurrentPassword("");
+    setNewPassword("");
+  };
 
-  if (!userInfo || !healthInfo) {
-    console.error("Missing data: UserInfo or HealthInfo is null.");
-    return <p>Failed to load data.</p>;
-  }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "Email") {
+      setUserInfo((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    } else {
+      setHealthInfo((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
+  };
 
-  const bmi = healthInfo?.BMI ? healthInfo.BMI.toFixed(2) : "N/A";
+  const calculateBMI = () => {
+    const heightInMeters = healthInfo.HeightCM / 100;
+    const bmi =
+      healthInfo.HeightCM && healthInfo.Weight
+        ? (healthInfo.Weight / (heightInMeters * heightInMeters)).toFixed(2)
+        : "N/A";
+    return bmi;
+  };
+
+  const handleSave = async () => {
+    const updatedUserInfo = {
+      email: userInfo.Email,
+      currentPassword: currentPassword || undefined,
+      newPassword: newPassword || undefined,
+    };
+
+    const updatedHealthInfo = {
+      HeightCM: parseFloat(healthInfo.HeightCM) || "",
+      Weight: parseFloat(healthInfo.Weight) || "",
+      BMI: calculateBMI(),
+    };
+
+    try {
+      const userResponse = await fetch(
+        `http://localhost:3000/api/user/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedUserInfo),
+        },
+      );
+
+      if (!userResponse.ok) {
+        const errorData = await userResponse.json();
+        throw new Error(errorData.message || "Failed to update user info.");
+      }
+
+      console.log("User info updated successfully.");
+
+      const refreshedUserResponse = await fetch(
+        `http://localhost:3000/api/getuser/${userId}`,
+      );
+      if (refreshedUserResponse.ok) {
+        const refreshedUserData = await refreshedUserResponse.json();
+        setUserInfo((prevState) => ({
+          ...prevState,
+          Email: refreshedUserData.Email,
+        }));
+      }
+
+      const healthResponse = await fetch(
+        `http://localhost:3000/api/HealthInfo/${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedHealthInfo),
+        },
+      );
+
+      if (!healthResponse.ok) {
+        throw new Error("Failed to update health info.");
+      }
+
+      const savedData = await healthResponse.json();
+      console.log("Health info updated successfully:", savedData);
+
+      setHealthInfo((prevState) => ({ ...prevState, ...updatedHealthInfo }));
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving data:", error.message);
+    }
+  };
+
+  const bmi = calculateBMI();
 
   return (
     <div className="profile-form-container">
@@ -66,27 +164,97 @@ export default function ProfileForm() {
 
       <div className="form-row">
         <label className="form-label">Email:</label>
-        <span className="read-only-text">{userInfo?.Email || "N/A"}</span>
+        {isEditing ? (
+          <input
+            className="rounded-input"
+            name="Email"
+            type="email"
+            value={userInfo.Email}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span className="read-only-text">{userInfo?.Email || "N/A"}</span>
+        )}
       </div>
 
       <div className="form-row">
         <label className="form-label">Password:</label>
-        <span className="read-only-text">******</span>
+        {isEditing ? (
+          <div className="password-inputs">
+            <input
+              className="rounded-input"
+              name="currentPassword"
+              type="password"
+              placeholder="Current Password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <input
+              className="rounded-input"
+              name="newPassword"
+              type="password"
+              placeholder="New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+        ) : (
+          <span className="read-only-text">******</span>
+        )}
       </div>
 
       <div className="form-row">
         <label className="form-label">Height (cm):</label>
-        <span className="read-only-text">{healthInfo?.HeightCM || "N/A"}</span>
+        {isEditing ? (
+          <input
+            className="rounded-input"
+            name="HeightCM"
+            type="number"
+            value={healthInfo.HeightCM}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span className="read-only-text">
+            {healthInfo?.HeightCM || "N/A"}
+          </span>
+        )}
       </div>
 
       <div className="form-row">
         <label className="form-label">Weight (kg):</label>
-        <span className="read-only-text">{healthInfo?.Weight || "N/A"}</span>
+        {isEditing ? (
+          <input
+            className="rounded-input"
+            name="Weight"
+            type="number"
+            value={healthInfo.Weight}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span className="read-only-text">{healthInfo?.Weight || "N/A"}</span>
+        )}
       </div>
 
       <div className="form-row">
         <label className="form-label">BMI:</label>
         <span className="read-only-text">{bmi}</span>
+      </div>
+
+      <div className="form-row button-group">
+        {isEditing ? (
+          <>
+            <button className="btn btn-save" onClick={handleSave}>
+              Save
+            </button>
+            <button className="btn btn-cancel" onClick={handleEditToggle}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button className="btn btn-edit" onClick={handleEditToggle}>
+            Edit
+          </button>
+        )}
       </div>
     </div>
   );

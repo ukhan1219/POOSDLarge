@@ -290,27 +290,30 @@ app.listen(PORT, () => {
 
 // Edit user info, only changes the fields that have been filled out, leaves the rest of the fields alone, includes password changing iff current password is there and correct
 app.put("/api/user/:id", async (req, res) => {
-  // Get user ID to find which user to edit
   const userID = parseInt(req.params.id, 10);
-  // Then get user's fields to edit
-  const { email, phone, currentPassword, newPassword } = req.body;
+  const { email, currentPassword, newPassword } = req.body;
 
   try {
-    const user = await db.collection("Users").findOne({ ID: userID });
-    // Fund user fielfs to update
-    const thingsToUpdate = {
-      ...(email && { Email: email }),
-      ...(phone && { Phone: phone }),
-    };
+    const user = await usersCollection.findOne({ ID: userID });
 
-    // Check if nerw password is there but not old password
-    if (!currentPassword && newPassword) {
-      return res.status(400).json({ message: "Both passwords are required." });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
 
-    // Only runs if both passwords are there
+    // Fields to update
+    const updates = {};
+
+    // Update email if provided
+    if (email) {
+      const emailExists = await usersCollection.findOne({ Email: email });
+      if (emailExists && emailExists.ID !== userID) {
+        return res.status(400).json({ message: "Email already in use." });
+      }
+      updates.Email = email;
+    }
+
+    // Update password if both current and new passwords are provided
     if (currentPassword && newPassword) {
-      // Check if current password is correct
       const passwordMatch = await bcrypt.compare(
         currentPassword,
         user.Password,
@@ -320,17 +323,19 @@ app.put("/api/user/:id", async (req, res) => {
           .status(401)
           .json({ message: "Current password is incorrect." });
       }
-      // Hash and update password
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      thingsToUpdate.Password = hashedPassword;
+      updates.Password = await bcrypt.hash(newPassword, 10);
     }
 
-    // Find user from ID and update
-    const result = await db
-      .collection("Users")
-      .updateOne({ ID: userID }, { $set: thingsToUpdate });
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No updates provided." });
+    }
 
-    if (result.matchedCount == 0) {
+    const result = await usersCollection.updateOne(
+      { ID: userID },
+      { $set: updates },
+    );
+
+    if (result.matchedCount === 0) {
       return res.status(404).json({ message: "User not found." });
     }
 
@@ -343,6 +348,7 @@ app.put("/api/user/:id", async (req, res) => {
   }
 });
 
+//  Gets health info for a user
 app.get("/api/gethealthinfo/:id", async (req, res) => {
   const userID = parseInt(req.params.id, 10); // Convert to int32
   console.log("Fetching health info for userID:", userID);
@@ -361,6 +367,7 @@ app.get("/api/gethealthinfo/:id", async (req, res) => {
   }
 });
 
+// Gets user info for a user
 app.get("/api/getuser/:id", async (req, res) => {
   const userID = parseInt(req.params.id, 10); // Convert to int32
   console.log("Fetching user data for userID:", userID);
