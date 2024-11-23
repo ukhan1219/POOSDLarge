@@ -124,19 +124,32 @@ app.post("/api/addWorkout", async (req, res) => {
   }
 });
 
-// Edit Workout
-app.patch("/api/editWorkout/:id", async (req, res) => {
-  const { id } = req.params;
-  const { dateString, Text, MuscleGroup } = req.body;
+// Edit Workout Entry
+app.patch("/api/editWorkout", async (req, res) => {
+  const { UserID, dateString, Text, MuscleGroup } = req.body;
+
   try {
-    const result = await workoutCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { Date: new Date(dateString), Text, MuscleGroup } },
+    // Validate UserID exists in the Users collection
+    const user = await usersCollection.findOne({ ID: parseInt(UserID, 10) });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid UserID: User not found." });
+    }
+
+    const updates = {
+      ...(dateString && { Date: new Date(dateString) }),
+      ...(Text && { Text }),
+      ...(MuscleGroup && { MuscleGroup }),
+    };
+
+    const result = await workoutCollection.updateMany(
+      { UserID: parseInt(UserID, 10) },
+      { $set: updates }
     );
-    if (result.modifiedCount === 1) {
-      res.status(200).json({ message: "Workout entry updated successfully" });
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ message: "Workout entries updated successfully" });
     } else {
-      res.status(404).json({ error: "Workout entry not found" });
+      res.status(404).json({ error: "No workout entries found for this UserID." });
     }
   } catch (error) {
     console.error("Error updating workout entry:", error);
@@ -144,19 +157,51 @@ app.patch("/api/editWorkout/:id", async (req, res) => {
   }
 });
 
-// Delete Workout
-app.delete("/api/deleteWorkout/:id", async (req, res) => {
-  const { id } = req.params;
+// Delete Workout Entry
+app.delete("/api/deleteWorkout", async (req, res) => {
+  const { UserID } = req.body;
+
   try {
-    const result = await workoutCollection.deleteOne({ _id: new ObjectId(id) });
-    if (result.deletedCount === 1) {
-      res.status(200).json({ message: "Workout entry deleted successfully" });
+    // Validate UserID exists in the Users collection
+    const user = await usersCollection.findOne({ ID: parseInt(UserID, 10) });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid UserID: User not found." });
+    }
+
+    const result = await workoutCollection.deleteMany({ UserID: parseInt(UserID, 10) });
+
+    if (result.deletedCount > 0) {
+      res.status(200).json({ message: "Workout entries deleted successfully" });
     } else {
-      res.status(404).json({ error: "Workout entry not found" });
+      res.status(404).json({ error: "No workout entries found for this UserID." });
     }
   } catch (error) {
     console.error("Error deleting workout entry:", error);
     res.status(500).json({ error: "Failed to delete workout entry" });
+  }
+});
+
+// Get Workout Info
+app.get("/api/getWorkoutInfo", async (req, res) => {
+  const { UserID } = req.query;
+
+  try {
+    // Validate UserID exists in the Users collection
+    const user = await usersCollection.findOne({ ID: parseInt(UserID, 10) });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid UserID: User not found." });
+    }
+
+    const workouts = await workoutCollection.find({ UserID: parseInt(UserID, 10) }).toArray();
+
+    if (workouts.length > 0) {
+      res.status(200).json(workouts);
+    } else {
+      res.status(404).json({ error: "No workout entries found for this UserID." });
+    }
+  } catch (error) {
+    console.error("Error fetching workout info:", error);
+    res.status(500).json({ error: "Failed to fetch workout info" });
   }
 });
 
