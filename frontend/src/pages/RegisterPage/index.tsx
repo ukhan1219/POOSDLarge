@@ -2,14 +2,14 @@ import RegisterContent from "../../components/RegisterContent";
 
 import "./styles.css";
 
-function LoginPage() {
+function RegisterPage() {
   return (
     <>
-      <div className="flexbox-container">
+      <div className="flexbox-containerLogin">
         <RegisterContent />
       </div>
     </>
   );
 }
 
-export default LoginPage;
+export default RegisterPage;

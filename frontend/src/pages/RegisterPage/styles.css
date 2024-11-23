@@ -1,0 +1,17 @@
+.flexbox-containerLogin {
+    display: flex;
+    justify-content: center; /* Centers items horizontally */
+    align-items: center; /* Centers items vertically */
+    height: calc(
+        100vh - var(--navbar-height)
+    ); /* Adjust for the navbar height */
+    padding-top: var(
+        --navbar-height
+    ); /* Add invisible padding where the navbar would be */
+    box-sizing: border-box; /* Ensure padding doesn't affect the height */
+}
+
+/* Define the navbar height variable */
+:root {
+    --navbar-height: 60px; /* Adjust this value to match the navbar height */
+}
