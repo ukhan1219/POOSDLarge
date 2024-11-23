@@ -162,6 +162,7 @@ app.delete("/api/deleteWorkout/:id", async (req, res) => {
 
 // User Signup
 app.post("/api/signup", async (req, res) => {
+  initialiseIDCounter();
   try {
     const { name, email, password, phone } = req.body;
 
