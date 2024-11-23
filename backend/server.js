@@ -102,9 +102,7 @@ app.post("/api/login", async (req, res, next) => {
     res.status(200).json(ret);
   } catch (err) {
     console.error("Error during login:", err);
-    res
-      .status(500)
-      .json({ id: -1, name: "", error: "Oopsies we did a fucky wucky :3" });
+    res.status(500).json({ id: -1, name: "", error: "Oopsies we did a fucky wucky :3" });
   }
 });
 
@@ -112,11 +110,12 @@ app.post("/api/login", async (req, res, next) => {
 app.post("/api/addWorkout", async (req, res) => {
   const { dateString, Text, MuscleGroup, UserID } = req.body;
   try {
+    const userIDInt = BigInt(UserID);
     await workoutCollection.insertOne({
       Date: new Date(dateString),
       Text,
       MuscleGroup,
-      UserID: new Number(UserID),
+      UserID: userIDInt,
     });
     res.status(200).json({ message: "Workout entry added successfully" });
   } catch (error) {
@@ -222,7 +221,7 @@ app.post("/api/HealthInfo/:id", async (req, res) => {
         $set: {
           HeightCM: parseFloat(HeightCM),
           Weight: parseFloat(Weight),
-          BMI: parseFloat(BMI),
+          BMI: parseFloat(BMI)
         },
       },
       { upsert: true },
@@ -245,7 +244,7 @@ app.listen(PORT, () => {
 // Edit user info, only changes the fields that have been filled out, leaves the rest of the fields alone, includes password changing iff current password is there and correct
 app.put("/api/user/:id", async (req, res) => {
   // Get user ID to find which user to edit
-  const userID = parseInt(req.params.id, 10);
+  const userID = BigInt(req.params.id);
   // Then get user's fields to edit
   const { email, phone, currentPassword, newPassword } = req.body;
 
