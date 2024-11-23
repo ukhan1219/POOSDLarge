@@ -15,7 +15,6 @@ function LoginForm() {
     setError("");
 
     try {
-      // TODO CHANGE API URL WHEN PUSHED TO PROD
       const response = await fetch("http://localhost:3000/api/login", {
         method: "POST",
         headers: {
@@ -32,10 +31,10 @@ function LoginForm() {
       }
 
       const data = await response.json();
-      console.log("Login successful:", data.name);
+      console.log("Login successful:", data);
 
-      // update authentication
-      login({ name: data.name });
+      // save id and name in authentication context
+      login({ id: data.id, name: data.name });
       navigate("/dashboard");
     } catch (err) {
       console.error("Error during login:", err);
