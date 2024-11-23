@@ -6,13 +6,13 @@ import DayCard from "../DayCard";
 
 import "./content.css";
 
-function Content(props) {
+function Content({ user }) {
   const selectedOption = 0;
 
   let content;
   switch (selectedOption) {
     case 0:
-      content = <Update />;
+      content = <Update user={user} />;
       break;
     case 1:
       content = <DayCard />;
@@ -21,7 +21,7 @@ function Content(props) {
 
   return (
     <div className="stuff">
-      {props.status ? (
+      {user ? (
         <>
           <div className="calendar-container">
             <Calendar />
@@ -31,7 +31,7 @@ function Content(props) {
       ) : (
         <>
           <Blurb />
-          <img src={dumbbells} className="dumbbells"></img>
+          <img src={dumbbells} className="dumbbells" />
         </>
       )}
     </div>

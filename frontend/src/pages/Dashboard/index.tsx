@@ -1,17 +1,20 @@
-import NavBar from '../../components/NavBar'
-import Content from '../../components/Content'
+import NavBar from "../../components/NavBar";
+import Content from "../../components/Content";
+import { useAuth } from "../../authentication";
 
-import './dashboard.css'
+import "./dashboard.css";
 
-function Dashboard(props) {
-  return(
-    < >
-      <div className='flexbox-container'>
-        <NavBar status={props.status}/> 
-        <Content status={props.status}/>
+function Dashboard() {
+  const { user } = useAuth();
+
+  return (
+    <>
+      <div className="flexbox-container">
+        <NavBar />
+        <Content user={user} />
       </div>
     </>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;

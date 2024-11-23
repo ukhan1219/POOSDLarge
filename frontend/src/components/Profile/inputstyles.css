@@ -1,12 +1,8 @@
-/* This is for profileheader.tsx and editprofile.tsx */
-
-/* Profile form container */
 .profile-form-container {
     padding: 1rem;
     font-family: Arial, sans-serif;
 }
 
-/* Header area (picture & name) */
 .profile-header {
     display: flex;
     align-items: center;
@@ -25,12 +21,11 @@
 .profile-image img {
     width: 80px;
     height: 80px;
-    border-radius: 50%; /* Circle image */
+    border-radius: 50%;
     object-fit: cover;
     border: 2px solid #ccc;
 }
 
-/* Container for name inputs */
 .name-inputs {
     display: flex;
     gap: 0.5rem;
@@ -44,7 +39,6 @@
     width: 100%;
 }
 
-/* Styling for labels */
 .form-label {
     color: white;
     font-weight: bold;
@@ -58,17 +52,16 @@
     padding: 0.5rem;
     border-radius: 30px;
     border: 1px solid #ccc;
-    background-color: #f5f5f5; /* Ensure consistent background color */
+    background-color: #f5f5f5;
     font-size: 1rem;
     width: 50%;
     text-align: left;
-    color: black; /* Ensure text color is black */
-    outline: none; /* Remove default browser focus outline */
+    color: black;
+    outline: none;
 }
 
-/* Add custom focus styles */
 .rounded-input:focus {
-    background-color: #f5f5f5; /* Keep background color unchanged */
-    border-color: #007bff; /* Optional: Add a focus border color */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Optional: Add a subtle glow effect */
+    background-color: #f5f5f5;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }

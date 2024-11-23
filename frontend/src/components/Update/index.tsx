@@ -1,10 +1,10 @@
 import "./update.css";
 
-function Update() {
-  const User = "John";
+function Update({ user }) {
+  const User = user?.name || "Guest";
   const Exercised = 0;
   const toExercise = 0;
-
+  //TODO ADD REAL EXCERSIE DATA
   return (
     <>
       <div className="update-container">
