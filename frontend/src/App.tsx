@@ -9,7 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/RegisterPage";
-import ProfileForm from "./pages/ProfilePage";
+import ProfilePage from "./pages/ProfilePage";
 
 import "./App.css";
 
@@ -26,7 +26,14 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile" element={<ProfileForm />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/dashboard"
             element={

@@ -73,36 +73,27 @@ app.use((req, res, next) => {
   next();
 });
 app.post("/api/login", async (req, res, next) => {
-  // incoming: login, password
-  // outgoing: id, firstName, lastName, error
-  var error = "";
   const { login, password } = req.body;
 
   try {
-    // Search for user's email
     const user = await db.collection("Users").findOne({ Email: login });
     if (!user) {
-      error = "Invalid username";
-      return res.status(400).json({ id: -1, name: "", error: error });
+      return res
+        .status(400)
+        .json({ id: -1, name: "", error: "Invalid username" });
     }
 
-    // Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.Password);
     if (!passwordMatch) {
-      error = "Incorrect password";
-      return res.status(400).json({ id: -1, name: "", error: error });
+      return res
+        .status(400)
+        .json({ id: -1, name: "", error: "Incorrect password" });
     }
 
-    // Login successful
-    const ret = {
-      id: user.ID,
-      name: user.Name,
-      error: "",
-    };
-    res.status(200).json(ret);
+    res.status(200).json({ id: user.ID, name: user.Name });
   } catch (err) {
     console.error("Error during login:", err);
-    res.status(500).json({ id: -1, name: "", error: "Oopsies we did a fucky wucky :3" });
+    res.status(500).json({ id: -1, name: "", error: "Server error" });
   }
 });
 
@@ -266,7 +257,7 @@ app.post("/api/HealthInfo/:id", async (req, res) => {
         $set: {
           HeightCM: parseFloat(HeightCM),
           Weight: parseFloat(Weight),
-          BMI: parseFloat(BMI)
+          BMI: parseFloat(BMI),
         },
       },
       { upsert: true },
@@ -338,5 +329,44 @@ app.put("/api/user/:id", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error while updating user", error: error.message });
+  }
+});
+
+app.get("/api/gethealthinfo/:id", async (req, res) => {
+  const userID = parseInt(req.params.id, 10); // Convert to int32
+  console.log("Fetching health info for userID:", userID);
+
+  try {
+    const healthInfo = await healthInfoCollection.findOne({ UserID: userID });
+
+    if (!healthInfo) {
+      return res.status(404).json({ message: "Health information not found." });
+    }
+
+    res.status(200).json(healthInfo);
+  } catch (error) {
+    console.error("Error fetching health information:", error);
+    res.status(500).json({ error: "Failed to fetch health information." });
+  }
+});
+
+app.get("/api/getuser/:id", async (req, res) => {
+  const userID = parseInt(req.params.id, 10); // Convert to int32
+  console.log("Fetching user data for userID:", userID);
+
+  try {
+    const user = await usersCollection.findOne(
+      { ID: userID },
+      { projection: { Email: 1, Name: 1 } },
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Failed to fetch user." });
   }
 });
