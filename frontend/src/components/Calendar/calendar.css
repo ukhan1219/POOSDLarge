@@ -1,38 +1,72 @@
-.calendar{
+.calendar {
     text-align: center;
-    width: 100vw;
+    width: 100%;
     height: 100%;
     /* background-color: blue; */
 }
 
-.calendar-grid{
+.calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    /* border: 2px solid black; */
-    margin: 15px;
+    grid-template-rows: 30px repeat(6, 1fr);
+    height: 92%;
+    /* margin: 15px; */
 }
 
-.calendar-title{
-    font-size: 2em;
-    margin: 20px;
+.calendar-cell,
+.day-of-week {
+    box-sizing: border-box;
+    border: 1px solid black;
+    margin: 0;
+    padding: 5px;
 }
 
-.day-of-week{
-    border: 2px solid black;
-    margin: -1px;
-    margin-top: -3px;
-}
-
-.calendar-cell{
+.calendar-cell {
     font-size: 1.1em;
     text-align: left;
-    padding: 7px;
-    border: 2px solid black;
-    height: 120px;
-    margin: -1px;
     cursor: pointer;
 }
 
-.left-arrow, .right-arrow{
+.day-of-week {
+    text-align: center;
+    font-weight: bold;
+}
+
+.calendar-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.left-arrow,
+.right-arrow {
     cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 1.5em;
+    padding: 0 10px;
+    color: #333;
+    flex-shrink: 0;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.calendar-cell {
+    font-size: 1.1em;
+    text-align: left;
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+.calendar-cell.today {
+    border: 2px solid #333;
+    font-weight: bold;
 }

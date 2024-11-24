@@ -7,7 +7,7 @@ import DayCard from "../DayCard";
 import "./content.css";
 
 function Content({ user }) {
-  const selectedOption = 0;
+  const selectedOption = 1;
 
   let content;
   switch (selectedOption) {
