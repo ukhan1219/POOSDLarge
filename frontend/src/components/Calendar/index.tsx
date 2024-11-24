@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./calendar.css";
 
-function Calendar() {
+function Calendar(props) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -23,6 +23,7 @@ function Calendar() {
     const selected = new Date(currentYear, currentMonth, day);
     console.log("Clicked Date:", selected.toDateString());
     setSelectedDate(selected);
+    props.choose(selected.toDateString())
   };
 
   const handlePrevMonth = () => {
@@ -77,8 +78,10 @@ function Calendar() {
           className={`calendar-cell ${isToday ? "today" : ""} ${
             isSelected ? "selected" : ""
           }`}
-          onClick={() => handleDayClick(day)}
-        >
+          onClick={() => {
+            handleDayClick(day)
+            props.select(day)
+          }}>
           {day}
         </div>,
       );
@@ -98,7 +101,7 @@ function Calendar() {
     <div className="calendar">
       <div className="calendar-header">
         <button className="left-arrow" onClick={handlePrevMonth}>
-          &lt;
+          &lt;-
         </button>
         <span className="calendar-title">
           {new Date(currentYear, currentMonth).toLocaleString("default", {
@@ -107,7 +110,7 @@ function Calendar() {
           })}
         </span>
         <button className="right-arrow" onClick={handleNextMonth}>
-          &gt;
+          -&gt;
         </button>
       </div>
       <div className="calendar-grid">

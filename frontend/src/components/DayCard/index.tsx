@@ -2,10 +2,9 @@
 
 import './daycard.css'
 
-function DayCard() {
+function DayCard(props) {
 
   const typeShit = 0
-  const today = "November 1, 2024"
 
   let content
   switch(typeShit) {
@@ -22,14 +21,14 @@ function DayCard() {
     < >
       <div className='daycard-container'>
         <div className='card-title'>
-          {today}
+          {props.chosenDay}
         </div>
         <div className='card-contents'>
           {content}
         </div>
         <div className='card-footer'>
           <button className='edit-btn'>Edit</button>
-          <button className='done-btn'>Done</button>
+          <button className='done-btn' onClick={() => props.option(0)}>Done</button>
         </div>
       </div>
     </>

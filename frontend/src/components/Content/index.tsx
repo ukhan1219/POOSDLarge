@@ -3,19 +3,31 @@ import Blurb from "../Blurb";
 import dumbbells from "../../assets/dumbbells.png";
 import Update from "../Update";
 import DayCard from "../DayCard";
+import { useState } from "react"
 
 import "./content.css";
 
 function Content({ user }) {
-  const selectedOption = 1;
+  const [selectedOption, setSelectedOption] = useState(0);
+
+  function handleSelection(day) {
+    setSelectedOption(day)
+  }
+
+  const [selectedDay, setSelectedDay] = useState(null)
+
+  function handleSelectDay(day) {
+    console.log(day)
+    setSelectedDay(day)
+  }
 
   let content;
   switch (selectedOption) {
     case 0:
       content = <Update user={user} />;
       break;
-    case 1:
-      content = <DayCard />;
+    default:
+      content = <DayCard chosenDay={selectedDay} option={handleSelection}/>;
       break;
   }
 
@@ -24,7 +36,7 @@ function Content({ user }) {
       {user ? (
         <>
           <div className="calendar-container">
-            <Calendar />
+            <Calendar choose={handleSelectDay} select={handleSelection}/>
           </div>
           <div className="action-container">{content}</div>
         </>
