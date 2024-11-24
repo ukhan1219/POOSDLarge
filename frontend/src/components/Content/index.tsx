@@ -12,19 +12,6 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({ status }) => {
   console.log("content status:", status);
-
-  const selectedOption = 0;
-
-  let content;
-  switch (selectedOption) {
-    case 0:
-      content = <Update />;
-      break;
-    case 1:
-      content = <DayCard />;
-      break;
-  }
-
   return (
     <div className="stuff">
         <Blurb status = {status}/>

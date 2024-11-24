@@ -1,39 +1,59 @@
-
-
+import React, {createContext, useState, useContext, ReactNode} from "react";
+import {useCalendar} from '../Calendar/calendarContext.tsx'
+import EventForm from "./eventForm.tsx";
 import './daycard.css'
 
-function DayCard() {
+const DayCard: React.FC = () =>  {
 
-  const typeShit = 0
-  const today = "November 1, 2024"
+  const {selectedDate, events} = useCalendar();
+  const [isEditing, setIsEditing] = useState(false);
 
-  let content
-  switch(typeShit) {
-    case 0:
-      content = (
-        < >
-          <p>No workout logged</p>
-        </>
-      )
-      break
-  }
+  const toggleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
+
+  const dayEvents = selectedDate
+    ? events[selectedDate.toISOString().split('T')[0]] || []
+    : [];
 
   return (
     < >
       <div className='daycard-container'>
         <div className='card-title'>
-          {today}
+          <p> {selectedDate ? selectedDate.toDateString() : "No Date Selected"}</p>
         </div>
         <div className='card-contents'>
-          {content}
-        </div>
-        <div className='card-footer'>
-          <button className='edit-btn'>Edit</button>
-          <button className='done-btn'>Done</button>
-        </div>
-      </div>
-    </>
-  )
-}
+          {isEditing ? (
+                      <EventForm /> // No need to pass selectedDate; it's available via context
+                  ) : (
+                      <>
+                          <p>Events for the day:</p>
+                          {dayEvents.length > 0 ? (
+                              <ul>
+                                  {dayEvents.map((event, index) => (
+                                      <li key={index}>
+                                          <strong>{event.title}</strong>
+                                          <p>{event.exercises.join(', ')}</p>
+                                          <p>Calories: {event.calorieCount}</p>
+                                          <p>Time: {event.time}</p>
+                                      </li>
+                                  ))}
+                              </ul>
+                          ) : (
+                              <p>No events logged for this day.</p>
+                          )}
+                      </>
+                  )}
+              </div>
+              <div className="card-footer">
+                  <button className="edit-btn" onClick={toggleEdit}>
+                      {isEditing ? 'Cancel' : 'Edit'}
+                  </button>
+                  <button className="done-btn">Done</button>
+              </div>
+          </div>
+        </>
+      );
+  };
 
 export default DayCard

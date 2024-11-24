@@ -1,30 +1,32 @@
 import React, { useState } from 'react'
-
+import {useCalendar} from './calendarContext.tsx'
 import './calendar.css'
 
 function Calendar() {
 
-  const[selectedDate, setSelectedDate] = useState(null)
-  const[events, setEvent] = useState({})
+  const {selectedDate, setSelectedDate} = useCalendar();
+  console.log({ selectedDate, setSelectedDate });
+  const {events, setEvents} = useCalendar();
 
-  const currentDate = new Date()
-  const currentYear = currentDate.getFullYear()
-  const currentMonth = currentDate.getMonth()
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
 
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate()
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
   }
 
   const daysInMonth = getDaysInMonth(currentYear, currentMonth)
 
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 
-  const handleDayClick = (day) => {
-    selectedDate(day)
-  }
+  const handleDayClick = (day: number) => {
+    setSelectedDate(new Date(currentYear, currentMonth, day));
+    console.log("Selected date: ", new Date(currentYear, currentMonth, day))
+  };
 
   return (
-    < >
+    <>
     <div className='calendar'>
       <p className='calendar-title'>
         <a className='left-arrow'>&lt;- </a>
@@ -39,20 +41,25 @@ function Calendar() {
         ))}
         {Array.from({ length: daysInMonth }, (_, index) =>{
           const day = index + 1
+          const dateKey = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
+          const hasEvents = events[dateKey] && events[dateKey].length > 0;
+          
           return (
             <div
               key={day}
-              className='calendar-cell'
+              className={`calendar-cell ${hasEvents ? 'has-event' : ''}
+                ${selectedDate?.getDate() === day ? "selected" : ""
+              }`}
               onClick={() => handleDayClick(day)}
             >
-              {day}
+              <span>{day}</span>
             </div>
-          )
+          );
         })}
       </div>
     </div>
     </>
-  )
+  );
 }
 
 export default Calendar

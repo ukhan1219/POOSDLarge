@@ -24,6 +24,7 @@
 }
 
 .calendar-cell{
+    position: relative;
     font-size: 1.1em;
     text-align: left;
     padding: 7px;
@@ -36,3 +37,36 @@
 .left-arrow, .right-arrow{
     cursor: pointer;
 }
+
+.calendar-cell {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid 'black';
+}
+  
+.calendar-cell:hover {
+    background-color: #f0f0f0;
+    border:'white';
+}
+  
+.calendar-cell.selected {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+
+}
+
+
+.has-event {
+    background-color: #f1f1f1; /* Light color to indicate there are events */
+}
+
+.event-dot {
+    position: absolute; 
+    width: 8px;
+    height: 8px;
+    background-color: Black;
+    border-radius: 50%;
+    bottom: 5px; 
+  }

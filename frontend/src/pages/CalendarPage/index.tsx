@@ -1,12 +1,20 @@
 import Calendar from '../../components/Calendar/index.tsx';
 import Update from '../../components/Update/index.tsx';
-import DayCard from '../../components/Update/index.tsx';
-
+import DayCard from '../../components/DayCard/index.tsx';
+import { CalendarProvider } from '../../components/Calendar/calendarContext.tsx';
 import './styles.css';
+import React, {createContext, useState, useContext} from "react";
+
+interface DateContextType {
+    selectedDate: Date | null;
+    setSelectedDate: (date : Date) => void;
+}
+
+
 
 function CalendarPage() {
 
-     const selectedOption = 0;
+     const selectedOption = 1;
 
         let content;
         switch (selectedOption) {
@@ -20,10 +28,12 @@ function CalendarPage() {
         return(
         <>
             <div className = "stuff">
-                <div className="calendar-container">
-                    <Calendar />
-                </div>
-                <div className="action-container">{content}</div>
+                <CalendarProvider>
+                    <div className="calendar-container">
+                            <Calendar/>
+                    </div>
+                    <div className="action-container">{content}</div>
+                </CalendarProvider>
             </div>
         </>
     );
