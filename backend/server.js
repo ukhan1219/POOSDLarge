@@ -388,3 +388,29 @@ app.get("/api/getuser/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch user." });
   }
 });
+
+app.get("/api/getHealthInfo/:id", async (req,res) => {
+
+  const { id } = req.params;
+
+  try {
+
+    const BigUserID = BigInt(id);
+    const user = await db.collection("Users").findOne({ ID: BigUserID });
+
+    if(!user){
+      return res.status(404).json({ Error: "No User"});
+    }
+
+    const healthInfo = await db.collection("HealthInfo").findOne({ UserID: BigUserID });
+
+    if(!healthInfo){
+      return res.status(200).json({ message: "Successful but HealthInfo is empty"});
+    } else {
+      return res.status(200).json({ HealthInfo: healthInfo });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+
+});
