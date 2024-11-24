@@ -10,6 +10,12 @@ import "./content.css";
 function Content({ user }) {
   const [selectedOption, setSelectedOption] = useState(0);
 
+  const [cardState, setCardState] = useState(0)
+
+  function handleCardState(state) {
+    setCardState(state)
+  }
+
   function handleSelection(day) {
     setSelectedOption(day)
   }
@@ -27,7 +33,7 @@ function Content({ user }) {
       content = <Update user={user} />;
       break;
     default:
-      content = <DayCard chosenDay={selectedDay} option={handleSelection}/>;
+      content = <DayCard chosenDay={selectedDay} option={handleSelection} stateSelect={handleCardState} state={cardState}/>;
       break;
   }
 
@@ -36,7 +42,7 @@ function Content({ user }) {
       {user ? (
         <>
           <div className="calendar-container">
-            <Calendar choose={handleSelectDay} select={handleSelection}/>
+            <Calendar choose={handleSelectDay} select={handleSelection} state={handleCardState}/>
           </div>
           <div className="action-container">{content}</div>
         </>

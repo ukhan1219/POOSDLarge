@@ -23,6 +23,7 @@
 
 .card-contents{
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     font-size: 1.1em;
@@ -44,6 +45,7 @@
 }
 
 .card-footer>button{
+    font-family: "Inter", serif;
     margin: 5px;
     border-radius: 10px;
     font-size: 16px;
@@ -54,13 +56,56 @@
 }
 
 .edit-btn{
-    font-family: "Inter", serif;
     color: black;
     background-color: #F5EAB6;
 }
 
 .done-btn{
-    font-family: "Inter", serif;
     color: white;
     background-color: #020202;
+}
+.cancel-btn{
+    color: black;
+    background-color: #F5EAB6;
+}
+
+.form-container{
+    font-family: "Inter", serif;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 93%;
+}
+
+.form-container input {
+    width: 80%;
+    background-color: #EEEEEE;
+    border: 2px solid black;
+    padding: 15px;
+}
+
+.form-container textarea{
+    font-family: "Inter", serif;
+    width: 80%;
+    background-color: #EEEEEE;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.in-exercise {
+    height: 30%;
+}
+
+.idk {
+    display: flex;
+    width: 80%;
+    gap: 10px;
+}
+
+.empty-msg{
+    font-size: 20px;
 }

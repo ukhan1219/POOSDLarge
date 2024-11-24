@@ -80,6 +80,7 @@ function Calendar(props) {
           }`}
           onClick={() => {
             handleDayClick(day)
+            props.state(0)
             props.select(day)
           }}>
           {day}
