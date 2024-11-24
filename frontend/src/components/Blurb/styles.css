@@ -6,7 +6,9 @@
     width: 600px;
     height: 100%;
     background-color: #FFFDD3;
-    padding: 50px;
+    padding-top: 20px;
+    padding-left: 50px;
+    padding-right: 50px;
     color: black;
     border-radius: 30px;
 }
@@ -25,4 +27,15 @@
     justify-content: center;
     align-items: center;
     align-items: flex-end;
+}
+
+Button{
+    font-family: "JetBrains Mono", monospace;
+    font-size: 20px;
+    background-color: black;
+    color: white;
+    padding: 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
 }

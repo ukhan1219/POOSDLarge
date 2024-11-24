@@ -99,6 +99,7 @@ function RegisterForm() {
         <div className="form-group">
           <label htmlFor="full-name">Full Name</label>
           <input
+            className="register-input"
             type="text"
             id="full-name"
             placeholder="Enter your full name"
@@ -110,6 +111,7 @@ function RegisterForm() {
         <div className="form-group">
           <label htmlFor="phone">Phone Number</label>
           <input
+            className="register-input"
             type="tel"
             id="phone"
             placeholder="(xxx) xxx-xxxx"
@@ -121,6 +123,7 @@ function RegisterForm() {
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
+            className="register-input"
             type="email"
             id="email"
             placeholder="Enter your email"
@@ -132,6 +135,7 @@ function RegisterForm() {
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
+            className="register-input"
             type="password"
             id="password"
             placeholder="Enter your password"

@@ -44,7 +44,7 @@ function LoginForm() {
 
   return (
     <div className="login-form-container">
-      <h1 className="login-title">Login</h1>
+      <h1 className="login-title">Log In</h1>
       <p className="register-text">
         Don't have an account?{" "}
         <Link to="/register" className="register-link">
@@ -55,6 +55,7 @@ function LoginForm() {
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
+            className="login-input"
             type="email"
             id="email"
             placeholder="Enter your email"
@@ -66,6 +67,7 @@ function LoginForm() {
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
+            className="login-input"
             type="password"
             id="password"
             placeholder="Enter your password"
@@ -76,7 +78,7 @@ function LoginForm() {
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="login-button">
-          Login
+          Log In
         </button>
       </form>
     </div>

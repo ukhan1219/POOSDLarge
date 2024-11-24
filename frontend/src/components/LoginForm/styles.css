@@ -1,22 +1,22 @@
 .login-form-container {
-    font-family: "JetBrains Mono", monospace;
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    background-color: #1e1e1e;
+    /* background-color: #1e1e1e; */
     border-radius: 20px;
     color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: left;
 }
 
 .login-title {
-    font-size: 2em;
+    font-size: 36px;
     margin-bottom: 10px;
     color: white;
-    text-align: center;
+    /* background-color: blue; */
 }
 
 .error-message {
@@ -28,7 +28,6 @@
 .register-text {
     margin-bottom: 20px;
     font-size: 0.9em;
-    text-align: center;
 }
 
 .register-link {
@@ -51,6 +50,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    margin: 15px 0;
 }
 
 label {
@@ -67,6 +67,11 @@ input {
     font-size: 1em;
 }
 
+.login-input{
+    background-color: #D3D3D3;
+    padding: 15px;
+}
+
 input:focus {
     outline: none;
     background-color: #3e3e3e;
@@ -74,13 +79,13 @@ input:focus {
 
 .login-button {
     padding: 10px;
-    font-size: 1em;
+    font-size: 24px;
     border: none;
     border-radius: 5px;
     background-color: #fffdd3;
     color: black;
     cursor: pointer;
-    text-transform: uppercase;
+    font-family: "Inter", serif;
 }
 
 .login-button:hover {
