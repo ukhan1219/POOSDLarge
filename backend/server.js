@@ -191,24 +191,6 @@ app.delete("/api/deleteWorkout/:id", async (req, res) => {
   }
 });
 
-// Get Workout Info
-app.get("/api/getWorkoutInfo/:id", async (req, res) => {
-  const workoutID = parseInt(req.params.id, 10);
-
-  try {
-    const workout = await workoutCollection.findOne({ WorkoutID: workoutID });
-
-    if (!workout) {
-      return res.status(404).json({ message: "Workout entry not found." });
-    }
-
-    res.status(200).json(workout);
-  } catch (error) {
-    console.error("Error fetching workout info:", error);
-    res.status(500).json({ error: "Failed to fetch workout info" });
-  }
-});
-
 // User Signup
 app.post("/api/signup", async (req, res) => {
   initialiseIDCounter();
@@ -389,5 +371,54 @@ app.get("/api/getuser/:id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ error: "Failed to fetch user." });
+  }
+});
+
+// Get all workouts for a user
+app.get("/api/getAllWorkouts/:userId", async (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+
+  try {
+    const workouts = await workoutCollection.find({ UserID: userId }).toArray();
+
+    if (!workouts || workouts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No workouts found for this user." });
+    }
+
+    res.status(200).json(workouts);
+  } catch (error) {
+    console.error("Error fetching workouts:", error);
+    res.status(500).json({ error: "Failed to fetch workouts." });
+  }
+});
+// Get a workout for a specific user on a specific date
+app.get("/api/getWorkoutForDate/:userId/:date", async (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+  const date = new Date(req.params.date);
+
+  try {
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+    const workout = await workoutCollection.findOne({
+      UserID: userId,
+      Date: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
+
+    if (!workout) {
+      return res
+        .status(404)
+        .json({ message: "No workout found for this date." });
+    }
+
+    res.status(200).json(workout);
+  } catch (error) {
+    console.error("Error fetching workout for date:", error);
+    res.status(500).json({ error: "Failed to fetch workout for date." });
   }
 });

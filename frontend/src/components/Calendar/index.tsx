@@ -1,10 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./calendar.css";
 
-function Calendar(props) {
+function Calendar({ choose, state, select, userId }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [workoutDays, setWorkoutDays] = useState([]);
+
+  useEffect(() => {
+    const fetchWorkoutDays = async () => {
+      if (!userId) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/getAllWorkouts/${userId}`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch workouts");
+        }
+
+        const workouts = await response.json();
+        const workoutDates = workouts.map((workout) =>
+          new Date(workout.Date).toDateString(),
+        );
+        setWorkoutDays(workoutDates);
+      } catch (error) {
+        console.error("Error fetching workout days:", error);
+      }
+    };
+
+    fetchWorkoutDays();
+  }, [userId]);
 
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
@@ -19,11 +45,27 @@ function Calendar(props) {
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  const handleDayClick = (day) => {
+  const handleDayClick = async (day) => {
     const selected = new Date(currentYear, currentMonth, day);
-    console.log("Clicked Date:", selected.toDateString());
     setSelectedDate(selected);
-    props.choose(selected.toDateString())
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/getWorkoutForDate/${userId}/${selected.toISOString()}`,
+      );
+      if (!response.ok) {
+        throw new Error("No workout found for this date.");
+      }
+      const workout = await response.json();
+      console.log("Fetched workout:", workout);
+      choose(selected.toDateString(), workout);
+    } catch (error) {
+      console.log("No workout for this date, creating a new one.");
+      choose(selected.toDateString(), null);
+    }
+
+    state(0);
+    select(day);
   };
 
   const handlePrevMonth = () => {
@@ -61,6 +103,12 @@ function Calendar(props) {
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
+      const currentDate = new Date(
+        currentYear,
+        currentMonth,
+        day,
+      ).toDateString();
+
       const isToday =
         day === today.getDate() &&
         currentMonth === today.getMonth() &&
@@ -72,18 +120,18 @@ function Calendar(props) {
         selectedDate.getMonth() === currentMonth &&
         selectedDate.getFullYear() === currentYear;
 
+      const hasWorkout = workoutDays.includes(currentDate);
+
       cells.push(
         <div
           key={day}
           className={`calendar-cell ${isToday ? "today" : ""} ${
             isSelected ? "selected" : ""
           }`}
-          onClick={() => {
-            handleDayClick(day)
-            props.state(0)
-            props.select(day)
-          }}>
-          {day}
+          onClick={() => handleDayClick(day)}
+        >
+          <span className="day-number">{day}</span>
+          {hasWorkout && <span className="workout-icon">🏋️</span>}
         </div>,
       );
     }

@@ -1,60 +1,173 @@
-import './daycard.css'
+import { useState, useEffect } from "react";
+import "./daycard.css";
+import { useAuth } from "../../authentication";
 
-function DayCard(props) {
+function DayCard({ chosenDay, workout, setSelectedOption }) {
+  const { user } = useAuth();
+  const userId = user?.id;
 
-  let content;
+  const [selectedMuscleGroups, setSelectedMuscleGroups] = useState([]);
+  const [notes, setNotes] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  switch(props.state) {
-    case 0:
-      content = (
-        < >
-          <div className='card-contents'>
-            <p className='empty-msg'>No workout logged</p>
-          </div>
-          <div className='card-footer'>
-            <button className='edit-btn' onClick={() => props.stateSelect(1)}>Edit</button>
-            <button className='done-btn' onClick={() => {
-              props.option(0)
-              }}>Done</button>
-          </div>
-        </>
-      )
-      break;
-    case 1:
-      content = (
-        < >
-          <form className='form-container'>
-            <div className='card-contents'>
-              <input placeholder='Workout name' className='in-name'></input>
-              <textarea rows={4} placeholder="Exercises" className='in-exercise'></textarea>
-              <div className='idk'>
-                <input placeholder='Time' className='in-time'></input>
-                <input placeholder='Calories' className='in-cal'></input>
-              </div>
-            </div>
-            <div className='card-footer'>
-              <button className='cancel-btn' onClick={() => props.stateSelect(0)}>Cancel</button>
-              {/* this done button should submit the form */}
-              <button className='done-btn'>
-                Done
-              </button>
-            </div>
-          </form>
-        </>
-      )
-      break;
-  }
+  const muscleGroups = [
+    "Biceps",
+    "Triceps",
+    "Chest",
+    "Back",
+    "Shoulders",
+    "Legs",
+  ];
+
+  useEffect(() => {
+    if (workout) {
+      setSelectedMuscleGroups(workout.MuscleGroup || []);
+      setNotes(workout.Text || "");
+    } else {
+      setSelectedMuscleGroups([]);
+      setNotes("");
+    }
+  }, [workout]);
+
+  const handleMuscleGroupSelect = (group) => {
+    setSelectedMuscleGroups((prev) =>
+      prev.includes(group) ? prev.filter((g) => g !== group) : [...prev, group],
+    );
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!userId) {
+      console.error("No user ID found. Ensure the user is authenticated.");
+      return;
+    }
+
+    const workoutData = {
+      dateString: chosenDay,
+      MuscleGroup: selectedMuscleGroups,
+      Text: notes,
+      UserID: userId,
+    };
+
+    const apiUrl = workout
+      ? `http://localhost:3000/api/editWorkout/${workout.WorkoutID}`
+      : `http://localhost:3000/api/addWorkout`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: workout ? "PATCH" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(workoutData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save workout.");
+      }
+
+      const result = await response.json();
+      console.log("Workout saved:", result);
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error saving workout:", error);
+    }
+  };
+
+  const handleDeleteWorkout = async () => {
+    if (!workout || !workout.WorkoutID) {
+      console.error("No workout selected to delete.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/deleteWorkout/${workout.WorkoutID}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete workout.");
+      }
+
+      const result = await response.json();
+      console.log("Workout deleted:", result);
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting workout:", error);
+    }
+  };
 
   return (
-    < >
-      <div className='daycard-container'>
-        <div className='card-title'>
-          {props.chosenDay}
+    <div className="daycard-container">
+      <div className="card-title">{chosenDay}</div>
+      <form className="form-container" onSubmit={handleFormSubmit}>
+        <div className="card-contents">
+          <div className="dropdown-container">
+            <div
+              className="dropdown-header"
+              onClick={() => setDropdownOpen((prev) => !prev)}
+            >
+              {selectedMuscleGroups.length > 0
+                ? selectedMuscleGroups.join(", ")
+                : "Select Muscle Groups"}
+              <span className="dropdown-arrow">{dropdownOpen ? "▲" : "▼"}</span>
+            </div>
+            {dropdownOpen && (
+              <div className="dropdown-menu">
+                {muscleGroups.map((group, index) => (
+                  <div
+                    key={index}
+                    className={`dropdown-item ${
+                      selectedMuscleGroups.includes(group) ? "selected" : ""
+                    }`}
+                    onClick={() => handleMuscleGroupSelect(group)}
+                  >
+                    {group}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <textarea
+            rows={4}
+            placeholder="Notes"
+            className="in-exercise"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          ></textarea>
         </div>
-        {content}
-      </div>
-    </>
-  )
+        <div className="card-footer">
+          <button
+            className="cancel-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedOption(0); // Switch back to Update component
+            }}
+          >
+            Cancel
+          </button>
+          <button className="done-btn" type="submit">
+            Save
+          </button>
+          {workout && (
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={handleDeleteWorkout}
+            >
+              Delete
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
 }
 
-export default DayCard
+export default DayCard;
