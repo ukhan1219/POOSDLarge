@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./calendar.css";
+import dumbell from '../../assets/workoutIcon.png'
 
 function Calendar({ choose, state, select, userId, option }) {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -131,7 +132,7 @@ function Calendar({ choose, state, select, userId, option }) {
           onClick={() => handleDayClick(day)}
         >
           <span className="day-number">{day}</span>
-          {hasWorkout && <span className="workout-icon">🏋️</span>}
+          {hasWorkout && <img src={dumbell} className="workout-icon"></img>}
         </div>,
       );
     }
