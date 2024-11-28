@@ -164,7 +164,7 @@ function Calendar({ choose, state, select, userId }) {
       </div>
       <div className="calendar-grid">
         {daysOfWeek.map((day) => (
-          <div key={day} className="day-of-week">
+          <div key={day} className='day-of-week' >
             {day}
           </div>
         ))}

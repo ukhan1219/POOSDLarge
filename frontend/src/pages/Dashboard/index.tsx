@@ -10,7 +10,7 @@ function Dashboard() {
   return (
     <>
       <div className="flexbox-container">
-        <NavBar />
+        <NavBar user={user}/>
         <Content user={user} />
       </div>
     </>

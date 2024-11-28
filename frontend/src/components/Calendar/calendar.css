@@ -30,6 +30,10 @@
     cursor: pointer;
 }
 
+.selected {
+    background-color: #D4C893;
+}
+
 .day-of-week {
     text-align: center;
     font-weight: bold;
