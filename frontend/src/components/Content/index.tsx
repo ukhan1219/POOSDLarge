@@ -41,7 +41,7 @@ function Content({ user }) {
       {user ? (
         <>
           <div className="calendar-container">
-            <Calendar choose={handleSelection} userId={user.id} />
+            <Calendar choose={handleSelection} userId={user.id} option={selectedOption} />
           </div>
           <div className="action-container">{content}</div>
         </>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./calendar.css";
 
-function Calendar({ choose, state, select, userId }) {
+function Calendar({ choose, state, select, userId, option }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -126,7 +126,7 @@ function Calendar({ choose, state, select, userId }) {
         <div
           key={day}
           className={`calendar-cell ${isToday ? "today" : ""} ${
-            isSelected ? "selected" : ""
+            (isSelected && (option != 0)) ? "selected" : ""
           }`}
           onClick={() => handleDayClick(day)}
         >
