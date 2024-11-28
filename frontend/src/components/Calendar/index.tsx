@@ -14,7 +14,7 @@ function Calendar({ choose, state, select, userId, option }) {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/api/getAllWorkouts/${userId}`,
+          `https://group9.xyz:3000/api/getAllWorkouts/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch workouts");
@@ -52,7 +52,7 @@ function Calendar({ choose, state, select, userId, option }) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/getWorkoutForDate/${userId}/${selected.toISOString()}`,
+        `https://group9.xyz:3000/api/getWorkoutForDate/${userId}/${selected.toISOString()}`,
       );
       if (!response.ok) {
         throw new Error("No workout found for this date.");

@@ -51,8 +51,8 @@ function DayCard({ chosenDay, workout, setSelectedOption }) {
     };
 
     const apiUrl = workout
-      ? `http://localhost:3000/api/editWorkout/${workout.WorkoutID}`
-      : `http://localhost:3000/api/addWorkout`;
+      ? `https://group9.xyz:3000/api/editWorkout/${workout.WorkoutID}`
+      : `https://group9.xyz:3000/api/addWorkout`;
 
     try {
       const response = await fetch(apiUrl, {
@@ -84,7 +84,7 @@ function DayCard({ chosenDay, workout, setSelectedOption }) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/deleteWorkout/${workout.WorkoutID}`,
+        `http://group9.xyz:3000/api/deleteWorkout/${workout.WorkoutID}`,
         {
           method: "DELETE",
         },
