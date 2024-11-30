@@ -18,7 +18,7 @@ function Blurb() {
           Welcome to our fitness tracker website designed to help you achieve your goals and transform your body and mind.
         </p>
         <div className='btn-container'>
-          <Button />
+          <Button label="Get Started" path="/login" />
         </div>
       </div>
     </>

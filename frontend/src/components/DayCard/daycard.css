@@ -1,4 +1,5 @@
-.daycard-container{
+.daycard-container {
+    font-family: "Inter", serif;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -6,10 +7,10 @@
     width: 100%;
     height: 100%;
     border-radius: 10px;
-    background-color: #FFFDD3;
+    background-color: #fffdd3;
 }
 
-.card-title{
+.card-title {
     display: flex;
     align-items: center;
     /* border: 2px solid black; */
@@ -20,8 +21,9 @@
     margin: 15px;
 }
 
-.card-contents{
+.card-contents {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     font-size: 1.1em;
@@ -31,11 +33,10 @@
     margin: 0px 15px;
 }
 
-.card-footer{
+.card-footer {
     display: flex;
     justify-content: end;
     align-items: end;
-    font-size: 1.1em;
     /* border: 2px solid black; */
     width: 100%;
     height: 10%;
@@ -43,20 +44,123 @@
     padding-right: 5px;
 }
 
-.card-footer>button{
+.card-footer > button {
+    font-family: "Inter", serif;
     margin: 5px;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-size: 16px;
     border: 1px solid black;
     height: 30px;
     cursor: pointer;
     padding: 0px 10px;
 }
 
-.edit-btn{
-    background-color: #F5EAB6;
+.edit-btn {
+    color: black;
+    background-color: #f5eab6;
 }
 
-.done-btn{
+.done-btn {
     color: white;
     background-color: #020202;
+}
+.cancel-btn {
+    color: black;
+    background-color: #f5eab6;
+}
+
+.form-container {
+    font-family: "Inter", serif;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 92.2%;
+}
+
+.form-container input {
+    width: 80%;
+    background-color: #eeeeee;
+    border: 2px solid black;
+    padding: 15px;
+}
+
+.form-container textarea {
+    font-family: "Inter", serif;
+    width: 80%;
+    background-color: #eeeeee;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.in-exercise {
+    height: 30%;
+}
+
+.idk {
+    display: flex;
+    width: 80%;
+    gap: 10px;
+}
+
+.empty-msg {
+    font-size: 20px;
+}
+
+.dropdown-container {
+    position: relative;
+    width: 80%;
+    margin-bottom: 10px;
+}
+
+.dropdown-header {
+    padding: 10px;
+    background-color: #eeeeee;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown-arrow {
+    margin-left: 10px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border: 2px solid black;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.dropdown-item:hover {
+    background-color: #f5eab6;
+}
+
+.dropdown-item.selected {
+    background-color: #cce5ff;
+}
+
+.selected-groups-list {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
 }

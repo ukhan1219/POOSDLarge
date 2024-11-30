@@ -1,22 +1,21 @@
 .register-form-container {
-    font-family: "JetBrains Mono", monospace;
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    background-color: #1e1e1e;
+    /* background-color: #1e1e1e; */
     border-radius: 20px;
     color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .register-title {
-    font-size: 2em;
+    font-size: 36px;
     margin-bottom: 10px;
     color: white;
-    text-align: center;
+
 }
 
 .login-text {
@@ -38,7 +37,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 5px;
 }
 
 .form-group {
@@ -57,24 +56,30 @@ input {
     border: none;
     border-radius: 5px;
     background-color: #2e2e2e;
-    color: white;
+    color: black;
     font-size: 1em;
+}
+
+.register-input{
+    background-color: #D3D3D3;
+    padding: 15px;
 }
 
 input:focus {
     outline: none;
-    background-color: #3e3e3e;
+    /* background-color: #3e3e3e; */
 }
 
 .register-button {
+    font-family: "Inter", serif;
     padding: 10px;
-    font-size: 1em;
+    font-size: 24px;
     border: none;
     border-radius: 5px;
     background-color: #fffdd3;
     color: black;
     cursor: pointer;
-    text-transform: uppercase;
+    margin-top: 10px;
 }
 
 .register-button:hover {

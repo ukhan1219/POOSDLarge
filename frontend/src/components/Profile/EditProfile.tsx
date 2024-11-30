@@ -31,8 +31,8 @@ export default function ProfileForm() {
     async function fetchData() {
       try {
         const [userResponse, healthResponse] = await Promise.all([
-          fetch(`http://localhost:3000/api/getuser/${userId}`),
-          fetch(`http://localhost:3000/api/gethealthinfo/${userId}`),
+          fetch(`https://group9.xyz/api/getuser/${userId}`),
+          fetch(`https://group9.xyz/api/gethealthinfo/${userId}`),
         ]);
 
         if (userResponse.ok) {
@@ -103,7 +103,7 @@ export default function ProfileForm() {
 
     try {
       const userResponse = await fetch(
-        `http://localhost:3000/api/user/${userId}`,
+        `https://group9.xyz/api/user/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +121,7 @@ export default function ProfileForm() {
       console.log("User info updated successfully.");
 
       const refreshedUserResponse = await fetch(
-        `http://localhost:3000/api/getuser/${userId}`,
+        `https://group9.xyz/api/getuser/${userId}`,
       );
       if (refreshedUserResponse.ok) {
         const refreshedUserData = await refreshedUserResponse.json();
@@ -132,7 +132,7 @@ export default function ProfileForm() {
       }
 
       const healthResponse = await fetch(
-        `http://localhost:3000/api/HealthInfo/${userId}`,
+        `https://group9.xyz/api/HealthInfo/${userId}`,
         {
           method: "POST",
           headers: {

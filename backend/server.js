@@ -16,7 +16,8 @@ let db,
   usersCollection,
   workoutCollection,
   healthInfoCollection,
-  IDCounter = 1;
+  IDCounter = 1,
+  workoutIDCounter = 1;
 
 // Find the highest UserID and set IDCounter to the next highest one
 async function initialiseIDCounter() {
@@ -33,6 +34,23 @@ async function initialiseIDCounter() {
     console.log(`ID counter initialised to ${IDCounter}`);
   } catch (error) {
     console.error("Error initialising ID counter:", error);
+  }
+}
+async function initializeWorkoutIDCounter() {
+  try {
+    const highestWorkout = await workoutCollection
+      .find()
+      .sort({ WorkoutID: -1 })
+      .limit(1)
+      .toArray();
+
+    if (highestWorkout.length > 0) {
+      workoutIDCounter = highestWorkout[0].WorkoutID + 1; // Set to the next ID
+    }
+
+    console.log(`Workout ID counter initialized to ${workoutIDCounter}`);
+  } catch (error) {
+    console.error("Error initializing workout ID counter:", error);
   }
 }
 
@@ -58,7 +76,10 @@ async function connectToDatabase() {
   }
 }
 
-connectToDatabase().then(initialiseIDCounter);
+connectToDatabase().then(() => {
+  initialiseIDCounter();
+  initializeWorkoutIDCounter();
+});
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -99,16 +120,25 @@ app.post("/api/login", async (req, res, next) => {
 
 // Add Workout Entry
 app.post("/api/addWorkout", async (req, res) => {
+  initializeWorkoutIDCounter();
   const { dateString, Text, MuscleGroup, UserID } = req.body;
+
   try {
+    const workoutID = workoutIDCounter++; // Use the current counter value and increment
     const userIDInt = parseInt(UserID, 10);
-    await workoutCollection.insertOne({
+
+    const newWorkout = {
+      WorkoutID: workoutID, // Assign the new WorkoutID
       Date: new Date(dateString),
       Text,
       MuscleGroup,
       UserID: userIDInt,
-    });
-    res.status(200).json({ message: "Workout entry added successfully" });
+    };
+
+    await workoutCollection.insertOne(newWorkout);
+    res
+      .status(200)
+      .json({ message: "Workout entry added successfully", workoutID });
   } catch (error) {
     console.error("Error adding workout entry:", error);
     res.status(500).json({ error: "Failed to add workout entry" });
@@ -116,33 +146,26 @@ app.post("/api/addWorkout", async (req, res) => {
 });
 
 // Edit Workout Entry
-app.patch("/api/editWorkout", async (req, res) => {
-  const { UserID, dateString, Text, MuscleGroup } = req.body;
+app.patch("/api/editWorkout/:id", async (req, res) => {
+  const workoutID = parseInt(req.params.id, 10);
+  const { dateString, Text, MuscleGroup } = req.body;
 
   try {
-    // Validate UserID exists in the Users collection
-    const user = await usersCollection.findOne({ ID: parseInt(UserID, 10) });
-    if (!user) {
-      return res.status(400).json({ error: "Invalid UserID: User not found." });
-    }
-
     const updates = {
       ...(dateString && { Date: new Date(dateString) }),
       ...(Text && { Text }),
       ...(MuscleGroup && { MuscleGroup }),
     };
 
-    const result = await workoutCollection.updateMany(
-      { UserID: parseInt(UserID, 10) },
+    const result = await workoutCollection.updateOne(
+      { WorkoutID: workoutID },
       { $set: updates },
     );
 
     if (result.modifiedCount > 0) {
-      res.status(200).json({ message: "Workout entries updated successfully" });
+      res.status(200).json({ message: "Workout entry updated successfully" });
     } else {
-      res
-        .status(404)
-        .json({ error: "No workout entries found for this UserID." });
+      res.status(404).json({ error: "Workout entry not found." });
     }
   } catch (error) {
     console.error("Error updating workout entry:", error);
@@ -151,58 +174,20 @@ app.patch("/api/editWorkout", async (req, res) => {
 });
 
 // Delete Workout Entry
-app.delete("/api/deleteWorkout", async (req, res) => {
-  const { UserID } = req.body;
+app.delete("/api/deleteWorkout/:id", async (req, res) => {
+  const workoutID = parseInt(req.params.id, 10);
 
   try {
-    // Validate UserID exists in the Users collection
-    const user = await usersCollection.findOne({ ID: parseInt(UserID, 10) });
-    if (!user) {
-      return res.status(400).json({ error: "Invalid UserID: User not found." });
-    }
-
-    const result = await workoutCollection.deleteMany({
-      UserID: parseInt(UserID, 10),
-    });
+    const result = await workoutCollection.deleteOne({ WorkoutID: workoutID });
 
     if (result.deletedCount > 0) {
-      res.status(200).json({ message: "Workout entries deleted successfully" });
+      res.status(200).json({ message: "Workout entry deleted successfully" });
     } else {
-      res
-        .status(404)
-        .json({ error: "No workout entries found for this UserID." });
+      res.status(404).json({ error: "Workout entry not found." });
     }
   } catch (error) {
     console.error("Error deleting workout entry:", error);
     res.status(500).json({ error: "Failed to delete workout entry" });
-  }
-});
-
-// Get Workout Info
-app.get("/api/getWorkoutInfo", async (req, res) => {
-  const { UserID } = req.query;
-
-  try {
-    // Validate UserID exists in the Users collection
-    const user = await usersCollection.findOne({ ID: parseInt(UserID, 10) });
-    if (!user) {
-      return res.status(400).json({ error: "Invalid UserID: User not found." });
-    }
-
-    const workouts = await workoutCollection
-      .find({ UserID: parseInt(UserID, 10) })
-      .toArray();
-
-    if (workouts.length > 0) {
-      res.status(200).json(workouts);
-    } else {
-      res
-        .status(404)
-        .json({ error: "No workout entries found for this UserID." });
-    }
-  } catch (error) {
-    console.error("Error fetching workout info:", error);
-    res.status(500).json({ error: "Failed to fetch workout info" });
   }
 });
 
@@ -389,28 +374,51 @@ app.get("/api/getuser/:id", async (req, res) => {
   }
 });
 
-app.get("/api/getHealthInfo/:id", async (req,res) => {
-
-  const { id } = req.params;
+// Get all workouts for a user
+app.get("/api/getAllWorkouts/:userId", async (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
 
   try {
+    const workouts = await workoutCollection.find({ UserID: userId }).toArray();
 
-    const BigUserID = BigInt(id);
-    const user = await db.collection("Users").findOne({ ID: BigUserID });
-
-    if(!user){
-      return res.status(404).json({ Error: "No User"});
+    if (!workouts || workouts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No workouts found for this user." });
     }
 
-    const healthInfo = await db.collection("HealthInfo").findOne({ UserID: BigUserID });
-
-    if(!healthInfo){
-      return res.status(200).json({ message: "Successful but HealthInfo is empty"});
-    } else {
-      return res.status(200).json({ HealthInfo: healthInfo });
-    }
+    res.status(200).json(workouts);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error fetching workouts:", error);
+    res.status(500).json({ error: "Failed to fetch workouts." });
   }
+});
+// Get a workout for a specific user on a specific date
+app.get("/api/getWorkoutForDate/:userId/:date", async (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+  const date = new Date(req.params.date);
 
+  try {
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+    const workout = await workoutCollection.findOne({
+      UserID: userId,
+      Date: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
+
+    if (!workout) {
+      return res
+        .status(404)
+        .json({ message: "No workout found for this date." });
+    }
+
+    res.status(200).json(workout);
+  } catch (error) {
+    console.error("Error fetching workout for date:", error);
+    res.status(500).json({ error: "Failed to fetch workout for date." });
+  }
 });
