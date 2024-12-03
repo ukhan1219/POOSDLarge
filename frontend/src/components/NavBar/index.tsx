@@ -14,7 +14,7 @@ function NavBar(props) {
           {
             props.user ?
             <a href='profile'>Profile</a> :
-            <a href=''>Log In</a>
+            <a href='/login'>Log In</a>
           }
         </div>
       </div>
