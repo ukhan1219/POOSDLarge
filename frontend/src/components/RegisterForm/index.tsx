@@ -54,7 +54,7 @@ function RegisterForm() {
 
     try {
       // TODO CHANGE API URL WHEN PUSHED TO PROD
-      const response = await fetch("https://group9.xyz/api/signup", {
+      const response = await fetch("http://localhost:3000/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
