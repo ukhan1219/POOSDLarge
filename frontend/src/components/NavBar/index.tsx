@@ -8,9 +8,9 @@ function NavBar(props) {
   return (
     < >
       <div className="header">
-        <a className="logo">Fit</a>
+        <a href="/" className="logo">Fit</a>
         <div className="navigation">
-          {/* <a href="">About</a> */}
+        <a href="/about">About</a>
           {
             props.user ?
             <a href='profile'>Profile</a> :

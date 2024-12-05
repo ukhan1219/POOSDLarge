@@ -13,7 +13,7 @@ function Update({ user }) {
 
       try {
         const response = await fetch(
-          `https://group9.xyz/api/getAllWorkouts/${userId}`,
+          `http://localhost:3000/api/getAllWorkouts/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch workouts");
