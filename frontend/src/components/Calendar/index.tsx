@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./calendar.css";
-import dumbell from '../../assets/workoutIcon.png'
+import dumbell from "../../assets/workoutIcon.png";
 
 function Calendar({ choose, state, select, userId, option }) {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -14,7 +14,7 @@ function Calendar({ choose, state, select, userId, option }) {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/api/getAllWorkouts/${userId}`,
+          `https://group9.xyz/api/getAllWorkouts/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch workouts");
@@ -52,7 +52,7 @@ function Calendar({ choose, state, select, userId, option }) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/getWorkoutForDate/${userId}/${selected.toISOString()}`,
+        `https://group9.xyz/api/getWorkoutForDate/${userId}/${selected.toISOString()}`,
       );
       if (!response.ok) {
         throw new Error("No workout found for this date.");
@@ -127,7 +127,7 @@ function Calendar({ choose, state, select, userId, option }) {
         <div
           key={day}
           className={`calendar-cell ${isToday ? "today" : ""} ${
-            (isSelected && (option != 0)) ? "selected" : ""
+            isSelected && option != 0 ? "selected" : ""
           }`}
           onClick={() => handleDayClick(day)}
         >
@@ -165,7 +165,7 @@ function Calendar({ choose, state, select, userId, option }) {
       </div>
       <div className="calendar-grid">
         {daysOfWeek.map((day) => (
-          <div key={day} className='day-of-week' >
+          <div key={day} className="day-of-week">
             {day}
           </div>
         ))}
